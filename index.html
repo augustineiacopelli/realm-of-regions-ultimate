@@ -1,0 +1,2759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Realm of Regions Ultimate</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ==============================================
+   SHARED BASE
+============================================== */
+:root {
+  --gold: #f5c542;
+  --gold-dark: #c9922a;
+  --bg: #0a0515;
+  --panel: #251838;
+  --panel2: #1e1430;
+  --border: #5a3e8a;
+  --text: #f0e8ff;
+  --text-dim: #9a88bb;
+  --radius: 10px;
+  --forest: #2d6a2d;
+  --lava: #b83200;
+  --snow: #5ecfef;
+  --mountain: #5a6a8a;
+  --shadow-col: #2a1a40;
+  --desert: #c9922a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+h1, h2, .pixel { font-family: 'Press Start 2P', monospace; }
+
+/* ==============================================
+   HUB SCREEN
+============================================== */
+#hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, #1a0a30 0%, #0a0515 100%);
+  position: relative;
+}
+
+.hub-stars {
+  position: fixed; top:0; left:0; right:0; bottom:0; pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 8% 15%, white, transparent),
+    radial-gradient(1px 1px at 25% 55%, white, transparent),
+    radial-gradient(1px 1px at 45% 8%, white, transparent),
+    radial-gradient(1px 1px at 65% 75%, white, transparent),
+    radial-gradient(1px 1px at 82% 30%, white, transparent),
+    radial-gradient(1px 1px at 15% 80%, white, transparent),
+    radial-gradient(1px 1px at 55% 45%, #aaa, transparent),
+    radial-gradient(1px 1px at 88% 12%, white, transparent),
+    radial-gradient(2px 2px at 40% 65%, #ccaaff, transparent),
+    radial-gradient(1px 1px at 72% 90%, white, transparent),
+    radial-gradient(1px 1px at 33% 28%, white, transparent),
+    radial-gradient(1px 1px at 92% 60%, #aaffcc, transparent);
+  opacity: 0.5;
+}
+
+.hub-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(16px, 4vw, 30px);
+  color: var(--gold);
+  text-shadow: 0 0 20px #f5c54288, 3px 3px 0 #7a3000;
+  line-height: 1.7;
+  margin-bottom: 6px;
+  animation: hubglow 2.5s ease-in-out infinite alternate;
+}
+@keyframes hubglow {
+  from { text-shadow: 0 0 10px #f5c54255, 3px 3px 0 #7a3000; }
+  to   { text-shadow: 0 0 30px #f5c542cc, 3px 3px 0 #7a3000; }
+}
+
+.hub-subtitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1.8vw, 11px);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.hub-byline {
+  font-size: 12px;
+  color: #6a5880;
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+.hub-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.hub-btn {
+  width: 100%;
+  padding: 18px 24px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 2vw, 11px);
+  border-radius: var(--radius);
+  border: 2px solid;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s;
+  text-align: center;
+  line-height: 1.8;
+  background: var(--panel2);
+}
+.hub-btn:hover { transform: translateY(-3px); }
+.hub-btn:active { transform: scale(0.97); }
+
+.hub-btn-1 {
+  border-color: #4caf50;
+  color: #b8ffb8;
+  box-shadow: 0 0 0 #4caf5000;
+}
+.hub-btn-1:hover { box-shadow: 0 0 20px #4caf5055; }
+
+.hub-btn-2 {
+  border-color: #ff6b2b;
+  color: #ffccaa;
+  box-shadow: 0 0 0 #ff6b2b00;
+}
+.hub-btn-2:hover { box-shadow: 0 0 20px #ff6b2b55; }
+
+.hub-btn-3 {
+  border-color: #c9922a;
+  color: #ffe4a0;
+  box-shadow: 0 0 0 #c9922a00;
+}
+.hub-btn-3:hover { box-shadow: 0 0 20px #c9922a55; }
+
+.hub-btn .btn-tag {
+  display: block;
+  font-size: clamp(6px, 1.4vw, 9px);
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+/* ==============================================
+   GAME WRAPPERS
+============================================== */
+.game-wrapper {
+  display: none;
+  min-height: 100dvh;
+}
+.game-wrapper.active { display: block; }
+
+.back-to-hub {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 7px 12px;
+  background: #1a1025;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.back-to-hub:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ==============================================
+   GAME 1 & 2 SHARED STYLES (pixel)
+============================================== */
+.g-screen {
+  font-family: 'Nunito', sans-serif;
+  background: #1a1025;
+  color: #f0e8ff;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, #2a0a4a 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, #0a1a3a 0%, transparent 50%);
+  padding-top: 44px;
+}
+
+/* ── shared btn ── */
+.g-btn {
+  display: inline-block; padding: 14px 32px;
+  font-family: 'Press Start 2P', monospace; font-size: clamp(9px, 2.5vw, 12px);
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s; text-decoration: none;
+}
+.g-btn:active { transform: scale(0.96); }
+.g-btn-gold {
+  background: linear-gradient(135deg, #f5c542, #c9922a);
+  color: #1a1025; box-shadow: 0 4px 0 #7a4a00, 0 6px 20px #f5c54244;
+}
+.g-btn-gold:hover { box-shadow: 0 4px 0 #7a4a00, 0 8px 30px #f5c54266; }
+.g-btn-outline {
+  background: transparent; border: 2px solid #5a3e8a; color: #9a88bb;
+}
+.g-btn-outline:hover { border-color: #f5c542; color: #f5c542; }
+.g-btn-danger {
+  background: linear-gradient(135deg, #c0392b, #922b21);
+  color: white; box-shadow: 0 4px 0 #6e1608;
+}
+.g-btn-sm { padding: 8px 16px; font-size: 8px; }
+.g-btn-full { width: 100%; text-align: center; display: block; }
+
+/* ── game header ── */
+.g-game-header {
+  background: #251838; border: 2px solid #5a3e8a;
+  border-radius: 10px; padding: 12px 16px; margin-bottom: 12px;
+}
+.g-player-name-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.g-player-name-display { font-family: 'Press Start 2P', monospace; font-size: 10px; color: #f5c542; }
+.g-level-badge {
+  font-family: 'Press Start 2P', monospace; font-size: 9px;
+  background: #f5c542; color: #1a1025; padding: 4px 10px; border-radius: 6px;
+}
+.g-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 10px; }
+.g-stat-chip {
+  background: #1e1430; border: 1px solid #5a3e8a; border-radius: 6px; padding: 6px 4px; text-align: center;
+}
+.g-stat-chip .sl { font-size: 8px; color: #9a88bb; margin-bottom: 2px; font-family: 'Press Start 2P', monospace; }
+.g-stat-chip .sv { font-size: 14px; font-weight: 900; color: #f5c542; }
+.g-bars-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.g-bar-wrap {}
+.g-bar-label { font-size: 9px; color: #9a88bb; margin-bottom: 3px; display: flex; justify-content: space-between; }
+.g-bar-track { height: 10px; background: #0a0515; border-radius: 5px; overflow: hidden; border: 1px solid #5a3e8a; }
+.g-bar-fill { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+.g-bar-hp .g-bar-fill { background: linear-gradient(90deg,#c0392b,#e74c3c); }
+.g-bar-mp .g-bar-fill { background: linear-gradient(90deg,#1a5799,#3498db); }
+.g-bar-xp .g-bar-fill { background: linear-gradient(90deg,#c07a00,#f39c12); }
+.g-gold-row { text-align: right; font-size: 12px; font-weight: 700; color: #f5c542; margin-top: 8px; }
+
+/* ── nav ── */
+.g-nav-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.g-nav-btn {
+  flex: 1; min-width: 80px; padding: 10px 8px; text-align: center;
+  background: #1e1430; border: 2px solid #5a3e8a; border-radius: 8px;
+  cursor: pointer; font-family: 'Press Start 2P', monospace;
+  font-size: 7px; color: #9a88bb; transition: all 0.15s;
+}
+.g-nav-btn:hover { border-color: #f5c542; color: #f5c542; }
+.g-nav-btn.active { border-color: #f5c542; color: #f5c542; background: #2a1a40; }
+.g-nav-btn .ni { font-size: 16px; display: block; margin-bottom: 4px; }
+
+/* ── main area ── */
+.g-main-area {
+  background: #251838; border: 2px solid #5a3e8a;
+  border-radius: 10px; padding: 16px; margin-bottom: 12px; min-height: 200px;
+}
+.g-area-title {
+  font-family: 'Press Start 2P', monospace; font-size: 10px;
+  color: #f5c542; margin-bottom: 16px; text-align: center;
+}
+
+/* ── regions ── */
+.g-region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.g-region-btn {
+  padding: 18px 10px; border-radius: 10px; border: 2px solid transparent;
+  cursor: pointer; text-align: center; transition: all 0.2s;
+}
+.g-region-btn:hover { transform: translateY(-2px); }
+.g-region-btn:active { transform: scale(0.97); }
+.g-region-btn .ri { font-size: 28px; display: block; margin-bottom: 8px; }
+.g-region-btn .rn { font-family: 'Press Start 2P', monospace; font-size: 8px; }
+.g-region-btn .rr { font-size: 10px; margin-top: 4px; opacity: 0.8; }
+.gr-forest   { background: linear-gradient(135deg,#1a3a1a,#2d6a2d); border-color: #4caf50; color: #b8ffb8; }
+.gr-mountain { background: linear-gradient(135deg,#2a3450,#5a6a8a); border-color: #90a4d4; color: #c8d8ff; }
+.gr-lava     { background: linear-gradient(135deg,#4a1000,#b83200); border-color: #ff6b2b; color: #ffccaa; }
+.gr-snow     { background: linear-gradient(135deg,#0a2a40,#1a5a80); border-color: #5ecfef; color: #c8f0ff; }
+.gr-shadow   { background: linear-gradient(135deg,#0a0a12,#2a1a40); border-color: #a78bfa; color: #d8c8ff; }
+.gr-desert   { background: linear-gradient(135deg,#3a2000,#7a4a00); border-color: #c9922a; color: #ffe4a0; }
+.g-region-btn.locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
+
+/* ── town ── */
+.g-town-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.g-town-btn {
+  padding: 16px 10px; border-radius: 10px;
+  background: #1e1430; border: 2px solid #5a3e8a;
+  cursor: pointer; text-align: center; transition: all 0.2s; color: #f0e8ff;
+}
+.g-town-btn:hover { border-color: #f5c542; color: #f5c542; transform: translateY(-2px); }
+.g-town-btn .ti { font-size: 28px; display: block; margin-bottom: 8px; }
+.g-town-btn .tn { font-family: 'Press Start 2P', monospace; font-size: 8px; }
+
+/* ── shop ── */
+.g-shop-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px; background: #1e1430; border-radius: 8px;
+  border: 1px solid #5a3e8a; margin-bottom: 8px;
+}
+.g-shop-item .in { font-weight: 900; font-size: 14px; }
+.g-shop-item .id { font-size: 11px; color: #9a88bb; }
+.g-shop-item .ip { font-weight: 700; color: #f5c542; font-size: 13px; white-space: nowrap; margin-left: 12px; }
+
+/* ── battle ── */
+.g-enemy-display {
+  text-align: center; padding: 20px; background: #1e1430;
+  border-radius: 10px; border: 2px solid #5a3e8a; margin-bottom: 16px;
+}
+.g-enemy-sprite {
+  font-size: 56px; display: block; margin-bottom: 6px;
+  animation: gfloat 2s ease-in-out infinite alternate;
+}
+@keyframes gfloat { from{transform:translateY(0)} to{transform:translateY(-6px)} }
+.g-enemy-name { font-family: 'Press Start 2P', monospace; font-size: 10px; margin-bottom: 8px; }
+.g-enemy-hp-bar { max-width: 200px; margin: 0 auto; }
+
+.g-battle-log {
+  background: #0a0515; border: 1px solid #5a3e8a; border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 12px; min-height: 60px; font-size: 13px;
+  color: #f0e8ff; line-height: 1.6; font-style: italic;
+}
+.g-log-line { margin-bottom: 4px; }
+.g-log-player { color: #7ec8e3; }
+.g-log-enemy { color: #e88; }
+.g-log-good { color: #7ec87e; }
+
+.g-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.g-action-btn {
+  padding: 12px 8px; border-radius: 8px; border: 2px solid #5a3e8a;
+  background: #1e1430; color: #f0e8ff; cursor: pointer;
+  font-family: 'Press Start 2P', monospace; font-size: 8px; text-align: center;
+  transition: all 0.15s;
+}
+.g-action-btn:hover:not(:disabled) { border-color: #f5c542; color: #f5c542; }
+.g-action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.g-action-btn .ai { font-size: 20px; display: block; margin-bottom: 6px; }
+
+/* ── inv ── */
+.g-inv-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #1e1430; border-radius: 8px;
+  border: 1px solid #5a3e8a; margin-bottom: 8px;
+}
+
+/* ── msg overlay ── */
+.g-msg-overlay {
+  display: none; position: fixed; inset: 0; background: #000000cc;
+  z-index: 8000; align-items: center; justify-content: center; padding: 24px;
+}
+.g-msg-overlay.show { display: flex; }
+.g-msg-box {
+  background: #251838; border: 3px solid #f5c542;
+  border-radius: 16px; padding: 28px 24px; max-width: 360px; width: 100%;
+  text-align: center; box-shadow: 0 0 40px #f5c54244;
+}
+.g-msg-box h2 { font-family: 'Press Start 2P', monospace; font-size: 14px; color: #f5c542; margin-bottom: 16px; }
+.g-msg-box p { font-size: 14px; color: #f0e8ff; margin-bottom: 20px; line-height: 1.6; white-space: pre-line; }
+.g-msg-buttons { display: flex; gap: 10px; flex-direction: column; }
+
+.g-scroll-inner { max-height: 55vh; overflow-y: auto; padding-right: 4px; }
+.g-back-link { font-size: 10px; color: #9a88bb; cursor: pointer; margin-bottom: 12px; display: inline-block; }
+.g-back-link:hover { color: #f5c542; }
+.g-divider { border: none; border-top: 1px solid #5a3e8a; margin: 12px 0; }
+
+.g-region-header {
+  text-align: center; margin-bottom: 16px;
+  padding: 12px; border-radius: 8px; border: 2px solid;
+}
+.g-region-header.forest  { border-color: #4caf50; background: #1a3a1a; color: #b8ffb8; }
+.g-region-header.mountain { border-color: #90a4d4; background: #2a3450; color: #c8d8ff; }
+.g-region-header.lava    { border-color: #ff6b2b; background: #4a1000; color: #ffccaa; }
+.g-region-header.snow    { border-color: #5ecfef; background: #0a2a40; color: #c8f0ff; }
+.g-region-header.shadow  { border-color: #a78bfa; background: #1a1428; color: #d8c8ff; }
+.g-region-header.desert  { border-color: #c9922a; background: #3a2000; color: #ffe4a0; }
+.g-region-header .rhi { font-size: 32px; }
+.g-region-header .rhn { font-family: 'Press Start 2P', monospace; font-size: 9px; margin-top: 4px; }
+
+.g-tip { font-size: 11px; color: #9a88bb; text-align: center; margin-top: 8px; font-style: italic; }
+.g-name-input-wrap { width: 100%; max-width: 380px; margin-bottom: 24px; }
+.g-name-input-wrap label {
+  display: block; font-size: 11px; color: #f5c542; margin-bottom: 8px;
+  font-family: 'Press Start 2P', monospace; letter-spacing: 1px;
+}
+.g-name-input-wrap input {
+  width: 100%; padding: 14px 18px; font-size: 18px;
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  background: #1e1430; border: 2px solid #5a3e8a;
+  border-radius: 10px; color: #f0e8ff; outline: none; transition: border-color 0.2s;
+}
+.g-name-input-wrap input:focus { border-color: #f5c542; }
+
+/* ── game 3 tattle panel ── */
+.g3-tattle-popup {
+  display: none; position: fixed; inset: 0; background: #000000cc;
+  z-index: 8500; align-items: center; justify-content: center;
+}
+.g3-tattle-popup.active { display: flex; }
+.g3-tattle-box {
+  background: #251838; border: 2px solid #8e44ad;
+  border-radius: 6px; padding: 20px; min-width: 240px; max-width: 300px;
+}
+.g3-tattle-title { font-family: 'Press Start 2P', monospace; font-size: 11px; color: #d0a0ff; letter-spacing: 2px; border-bottom: 1px solid #5a3e8a; padding-bottom: 5px; margin-bottom: 10px; }
+.g3-tattle-stat { display: flex; justify-content: space-between; margin: 4px 0; font-size: 13px; }
+.g3-tattle-stat span:first-child { color: #9a88bb; }
+.g3-tattle-stat span:last-child { color: #f0e8ff; font-weight: 600; }
+
+/* ── game 3 extra action buttons ── */
+.g3-action-btn-magic { border-color: #6040a0 !important; color: #d0a0ff !important; }
+.g3-action-btn-magic:hover:not(:disabled) { border-color: #8e44ad !important; }
+.g3-action-btn-heart { border-color: #804060 !important; color: #ff8fab !important; }
+.g3-action-btn-heart:hover:not(:disabled) { border-color: #ff4488 !important; }
+.g3-action-btn-spare { border-color: #802020 !important; color: #ff8080 !important; }
+
+.g3-magic-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; max-height: 35vh; overflow-y: auto; }
+.g3-hearts-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.g3-sub-label { font-size: 9px; color: #9a88bb; letter-spacing: 1px; font-family: 'Press Start 2P', monospace; margin-bottom: 6px; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0515; }
+::-webkit-scrollbar-thumb { background: #5a3e8a; border-radius: 3px; }
+
+/* ── game title screens ── */
+#g1-title, #g2-title, #g3-title {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100dvh; text-align: center; padding: 24px;
+  background: radial-gradient(ellipse at center, #2a0a4a 0%, #0a0515 100%);
+}
+.g-title-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(18px, 5vw, 36px);
+  color: #f5c542;
+  text-shadow: 0 0 20px #f5c54288, 4px 4px 0 #7a3000;
+  line-height: 1.6; margin-bottom: 12px;
+  animation: gglow 2s ease-in-out infinite alternate;
+}
+@keyframes gglow {
+  from { text-shadow: 0 0 10px #f5c54255, 4px 4px 0 #7a3000; }
+  to   { text-shadow: 0 0 30px #f5c542bb, 4px 4px 0 #7a3000; }
+}
+.g-title-sub {
+  font-family: 'Press Start 2P', monospace; font-size: clamp(8px,2vw,12px);
+  color: #9a88bb; margin-bottom: 36px; letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+  .g3-magic-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.hub-btn-gp{border-color:#f5c542;color:#f5c542;}
+.hub-btn-gp:hover{box-shadow:0 0 20px rgba(245,197,66,0.3);}
+.hub-btn-mg{border-color:#5ecfef;color:#c8f0ff;}
+.hub-btn-mg:hover{box-shadow:0 0 20px rgba(94,207,239,0.3);}
+.hub-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9500;align-items:center;justify-content:center;padding:20px;}
+.hub-overlay.active{display:flex;}
+.hub-overlay-box{background:#1e1430;border:2px solid #5a3e8a;border-radius:12px;padding:24px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;font-family:'Press Start 2P',monospace;}
+.hub-overlay-title{font-size:12px;color:#f5c542;text-align:center;margin-bottom:16px;border-bottom:1px solid #5a3e8a;padding-bottom:12px;}
+.mg-card{background:#251838;border:2px solid #5a3e8a;border-radius:8px;padding:12px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;}
+.mg-card:hover:not(.locked){border-color:#f5c542;}
+.mg-card.locked{opacity:0.5;cursor:not-allowed;}
+.mg-card-name{font-size:9px;color:#f5c542;margin-bottom:4px;}
+.mg-card-sub{font-size:8px;color:#9a88bb;margin-top:2px;}
+.gp-display{font-size:14px;color:#f5c542;text-align:center;margin-bottom:16px;font-family:'Press Start 2P',monospace;}
+.htp-screen{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at center,#1a0a30 0%,#0a0515 100%);z-index:8800;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow-y:auto;}
+.htp-screen.active{display:flex;}
+.htp-title{font-family:'Press Start 2P',monospace;font-size:clamp(11px,2.5vw,16px);color:#f5c542;margin-bottom:16px;}
+.htp-sub{font-family:'Press Start 2P',monospace;font-size:clamp(9px,2vw,12px);margin-bottom:20px;}
+.htp-body{font-size:13px;color:#f0e8ff;line-height:1.9;max-width:520px;margin-bottom:24px;text-align:left;}
+.htp-body h3{font-family:'Press Start 2P',monospace;font-size:9px;color:#a78bfa;margin:14px 0 6px;}
+.htp-buttons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.mg-game-screen{display:none;position:fixed;inset:0;background:#0a0515;z-index:9000;overflow-y:auto;}
+.mg-game-screen.active{display:flex;flex-direction:column;}
+.mg-back-btn{position:fixed;top:10px;left:10px;z-index:9100;font-family:'Press Start 2P',monospace;font-size:8px;padding:7px 12px;background:#1a1025;border:2px solid #5a3e8a;border-radius:6px;color:#9a88bb;cursor:pointer;}
+.mg-back-btn:hover{border-color:#f5c542;color:#f5c542;}
+
+
+.play-timer-bar{position:fixed;top:0;left:0;right:0;z-index:8500;background:#1a1025;border-bottom:2px solid #5a3e8a;padding:4px 12px;display:none;align-items:center;justify-content:space-between;font-family:'Press Start 2P',monospace;font-size:8px;color:#f5c542;}
+.play-timer-bar.active{display:flex;}
+.play-timer-fill{height:6px;background:linear-gradient(90deg,#27ae60,#f5c542);border-radius:3px;transition:width 0.9s linear;}
+.play-timer-track{flex:1;height:6px;background:#251838;border-radius:3px;margin:0 8px;overflow:hidden;}
+.break-screen{display:none;position:fixed;inset:0;background:#0a0515;z-index:9800;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:'Press Start 2P',monospace;}
+.break-screen.active{display:flex;}
+.break-title{font-size:clamp(14px,4vw,22px);color:#f5c542;margin-bottom:16px;}
+.break-sub{font-size:10px;color:#9a88bb;margin-bottom:24px;line-height:1.8;}
+.break-timer{font-size:clamp(28px,8vw,48px);color:#f5c542;margin-bottom:20px;}
+.break-gp-btn{font-family:'Press Start 2P',monospace;font-size:10px;padding:14px 24px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;margin-bottom:10px;width:100%;max-width:320px;}
+.break-gp-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+
+.hub-btn-char{border-color:#ff8fab;color:#ffccd5;}
+.hub-btn-char:hover{box-shadow:0 0 20px rgba(255,143,171,0.3);}
+.char-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.char-card{background:#251838;border:2px solid #5a3e8a;border-radius:10px;padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.15s;}
+.char-card:hover{border-color:#f5c542;transform:translateY(-2px);}
+.char-card.selected{border-color:#ff8fab;background:#2a1428;}
+.char-sprite{font-size:32px;display:block;margin-bottom:6px;}
+.char-name{font-family:'Press Start 2P',monospace;font-size:8px;color:#f5c542;margin-bottom:4px;}
+.char-class{font-size:9px;color:#a78bfa;margin-bottom:6px;}
+.char-stats{font-size:8px;color:#9a88bb;line-height:1.7;}
+.char-stats b{color:#f0e8ff;}
+.char-equipped{font-size:8px;color:#ff8fab;margin-top:4px;}
+.char-select-btn{font-family:'Press Start 2P',monospace;font-size:8px;padding:8px 14px;background:linear-gradient(135deg,#ff8fab,#c05070);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:6px;width:100%;}
+.char-select-btn.equipped{background:linear-gradient(135deg,#27ae60,#1a7a40);}
+
+</style>
+</head>
+<body>
+
+<!-- ==============================================
+     HUB SCREEN
+============================================== -->
+<div id="hub">
+  <div class="hub-stars"></div>
+  <div class="hub-logo">REALM OF<br>REGIONS<br>ULTIMATE</div>
+  <div class="hub-subtitle">SELECT A GAME</div>
+  <div class="hub-byline">Designed &amp; created by Simon Iacopelli</div>
+  <div class="hub-menu">
+    <button class="hub-btn hub-btn-1" onclick="showHTP(1)">
+      <span class="btn-tag">&#9654; GAME 1</span>REALM OF REGIONS
+    </button>
+    <button class="hub-btn hub-btn-2" onclick="showHTP(2)">
+      <span class="btn-tag">&#9654; GAME 2</span>REALM OF REGIONS 2
+    </button>
+    <button class="hub-btn hub-btn-3" onclick="showHTP(3)">
+      <span class="btn-tag">&#9654; GAME 3</span>REALM OF REGIONS 3<br>THE DESERT AWAKENS
+    </button>
+    <button class="hub-btn hub-btn-gp" onclick="openGPOverlay()">
+      <span class="btn-tag">&#11088; GP</span>GAME POINTS
+    </button>
+    <button class="hub-btn hub-btn-mg" onclick="openMGOverlay()">
+      <span class="btn-tag">&#127918;</span>MINI GAMES
+    </button>
+    <button class="hub-btn hub-btn-char" onclick="openCharOverlay()">
+      <span class="btn-tag">&#9876;</span>CHARACTERS
+    </button>
+  </div>
+</div>
+
+<!-- HTP GAME 1 -->
+<div class="htp-screen" id="htp-1">
+  <div class="htp-title">HOW TO PLAY</div>
+  <div class="htp-sub" style="color:#4caf50;">REALM OF REGIONS</div>
+  <div class="htp-body">
+    <h3>Goal</h3>Defeat every region boss to unlock the next region. Clear all 4 regions to win!
+    <h3>World Map</h3>Pick a region, fight enemies to earn gold and XP, then challenge the boss.
+    <h3>Battle</h3>
+    <b>Attack</b> - Physical damage.<br>
+    <b>Magic</b> - Spend 5 MP for a magic blast.<br>
+    <b>Defend</b> - Block next hit, reflect 10 damage back. (10 uses max)<br>
+    <b>Item</b> - Use a potion or food from your bag.<br>
+    <b>Act</b> - Enemy misses their turn and becomes spareable.<br>
+    <b>Spare</b> - End the fight peacefully after Act. Bosses will punish you for this!
+    <h3>Secret Bosses</h3>Defeat 3 enemies in a row in any region to unlock a secret boss!
+    <h3>Shop and Inn</h3>Buy weapons and potions. Rest at the inn for 15g to restore HP and MP.
+    <h3>Leveling Up</h3>Earn XP from battles to level up and increase all stats!
+  </div>
+  <div class="htp-buttons">
+    <button class="hub-btn hub-btn-1" onclick="closeHTP(1)">&#8592; Back</button>
+    <button class="hub-btn hub-btn-1" onclick="closeHTPPlay(1)">&#9654; PLAY</button>
+  </div>
+</div>
+
+<!-- HTP GAME 2 -->
+<div class="htp-screen" id="htp-2">
+  <div class="htp-title">HOW TO PLAY</div>
+  <div class="htp-sub" style="color:#ff6b2b;">REALM OF REGIONS 2</div>
+  <div class="htp-body">
+    <h3>Goal</h3>Defeat all 5 demon bosses across 5 regions to conquer the realm!
+    <h3>World Map</h3>Fight enemies to earn gold and XP. Defeat the demon boss to unlock the next region and claim their Heart!
+    <h3>Battle</h3>
+    <b>Attack</b> - Physical strike.<br>
+    <b>Magic</b> - 5 MP for a magic blast.<br>
+    <b>Defend</b> - Block next hit, reflect 10 damage.<br>
+    <b>Item</b> - Use potions or throw a bomb.<br>
+    <b>Act</b> - Enemy misses turn, becomes spareable.<br>
+    <b>Spare</b> - Spare regular enemies. Bosses retaliate instantly!<br>
+    <b>Heart</b> - Use a Heart power earned from defeating a demon boss.
+    <h3>Heart Powers</h3>Wild Growth restores HP and MP fully. Rockslide and Inferno Blast deal heavy damage. Absolute Zero freezes the enemy. Shadow Drain steals HP from them.
+    <h3>Bestiary</h3>Every enemy you defeat gets logged. Try to collect them all!
+    <h3>Leveling Up</h3>Each level up fully restores your HP and MP!
+  </div>
+  <div class="htp-buttons">
+    <button class="hub-btn hub-btn-2" onclick="closeHTP(2)">&#8592; Back</button>
+    <button class="hub-btn hub-btn-2" onclick="closeHTPPlay(2)">&#9654; PLAY</button>
+  </div>
+</div>
+
+<!-- HTP GAME 3 -->
+<div class="htp-screen" id="htp-3">
+  <div class="htp-title">HOW TO PLAY</div>
+  <div class="htp-sub" style="color:#c9922a;">REALM OF REGIONS 3</div>
+  <div class="htp-body">
+    <h3>Goal</h3>Defeat all 6 Titans across 6 regions. Beat the Desert Titan to win and earn Game Points!
+    <h3>World Map</h3>Regions unlock in order. Defeat 5 enemies in a region to reveal a secret Knight. Defeat the Titan to advance.
+    <h3>Battle</h3>
+    <b>Attack</b> - Double damage against Titans!<br>
+    <b>Magic</b> - Spend MP to cast spells. More unlock as your kill count grows.<br>
+    <b>Hearts</b> - Special powers dropped by enemies.<br>
+    <b>Tattle</b> - Reveal enemy stats in the Tattle Book.<br>
+    <b>Defend</b> - Block and reflect 10 damage.<br>
+    <b>Act</b> - Enemy misses turn, becomes spareable.<br>
+    <b>Spare</b> - Spare regular enemies. Titans destroy you for trying!
+    <h3>Hearts</h3>Wild Growth heals all HP and restores all MP. Rockslide and Inferno Blast deal 35 damage. Absolute Zero freezes the enemy. Shadow Drain steals 20 HP. Desert Dash dodges 3 attacks.
+    <h3>Spells</h3>Start with 5 spells. Unlock more every 10 kills up to 100. Realm Break is the strongest!
+    <h3>2 Player Mode</h3>Players take turns. If one falls the other keeps fighting!
+    <h3>Game Points</h3>Beat the game by defeating the Desert Titan to earn 10 GP. Spend GP in the hub to unlock Mini Games!
+  </div>
+  <div class="htp-buttons">
+    <button class="hub-btn hub-btn-3" onclick="closeHTP(3)">&#8592; Back</button>
+    <button class="hub-btn hub-btn-3" onclick="closeHTPPlay(3)">&#9654; PLAY</button>
+  </div>
+</div>
+
+<!-- GP OVERLAY -->
+<div class="hub-overlay" id="gp-overlay">
+  <div class="hub-overlay-box">
+    <div class="hub-overlay-title">GAME POINTS</div>
+    <div class="gp-display">You have <span id="gp-amount">0</span> GP</div>
+    <p style="font-size:9px;color:#9a88bb;text-align:center;margin-bottom:16px;line-height:1.9;">Earn GP by beating Realm of Regions 3.<br>Spend 10 GP to unlock a new Mini Game.</p>
+    <button class="hub-btn hub-btn-gp" style="margin-bottom:12px;width:100%;" onclick="useGP()">USE GP (10 GP = 1 MINI GAME)</button>
+    <button class="hub-btn" style="border-color:#5a3e8a;color:#9a88bb;width:100%;" onclick="closeGPOverlay()">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- MINI GAMES OVERLAY -->
+<div class="hub-overlay" id="mg-overlay">
+  <div class="hub-overlay-box">
+    <div class="hub-overlay-title">MINI GAMES</div>
+    <div id="mg-list"></div>
+    <button class="hub-btn" style="border-color:#5a3e8a;color:#9a88bb;width:100%;margin-top:8px;" onclick="closeMGOverlay()">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- MINI GAME HOW TO PLAY OVERLAY -->
+<div class="hub-overlay" id="mg-htp-overlay">
+  <div class="hub-overlay-box">
+    <div class="hub-overlay-title" id="mg-htp-title">HOW TO PLAY</div>
+    <p id="mg-htp-body" style="font-size:11px;color:#f0e8ff;line-height:1.9;margin-bottom:18px;font-family:'Nunito',sans-serif;"></p>
+    <button class="hub-btn hub-btn-gp" style="margin-bottom:10px;width:100%;" onclick="launchMiniGame()">&#9654; PLAY</button>
+    <button class="hub-btn" style="border-color:#5a3e8a;color:#9a88bb;width:100%;" onclick="closeMGHTP()">&#8592; Back</button>
+  </div>
+</div>
+
+<!-- MINI GAME SCREEN -->
+<div class="mg-game-screen" id="mg-game-screen">
+  <button class="mg-back-btn" onclick="exitMiniGame()">&#8592; MENU</button>
+  <div id="mg-game-inner" style="padding-top:44px;flex:1;"></div>
+</div>
+
+<!-- ==============================================
+     GAME 1 WRAPPER
+============================================== -->
+<div id="game1-wrapper" class="game-wrapper">
+  <button class="back-to-hub" onclick="backToHub()">&#8592; MENU</button>
+  <div class="g-screen" id="g1-container" style="max-width:680px;margin:0 auto;padding:12px;">
+
+    <!-- Title -->
+    <div id="g1-title">
+      <div class="hub-stars"></div>
+      <div class="g-title-logo">REALM<br>OF<br>REGIONS</div>
+      <div class="g-title-sub">by Simon Iacopelli</div>
+      <div class="g-name-input-wrap">
+        <label>YOUR NAME</label>
+        <input type="text" id="g1-name-input" placeholder="Enter your name..." maxlength="16" autocomplete="off">
+      </div>
+      <button class="g-btn g-btn-gold" onclick="g1StartGame()">&amp;#9876; BEGIN ADVENTURE</button>
+      <div class="g-tip" style="margin-top:24px;">Forest &bull; Mountain &bull; Lava &bull; Frost</div>
+    </div>
+
+    <!-- Game screen -->
+    <div id="g1-game" style="display:none;">
+      <div class="g-game-header">
+        <div class="g-player-name-row">
+          <div class="g-player-name-display" id="g1-hdr-name">Hero</div>
+          <div class="g-level-badge">LV <span id="g1-hdr-level">1</span></div>
+        </div>
+        <div class="g-stats-row">
+          <div class="g-stat-chip"><div class="sl">ATK</div><div class="sv" id="g1-hdr-atk">5</div></div>
+          <div class="g-stat-chip"><div class="sl">MAG</div><div class="sv" id="g1-hdr-mag">5</div></div>
+          <div class="g-stat-chip"><div class="sl">PWR</div><div class="sv" id="g1-hdr-pwr">5</div></div>
+          <div class="g-stat-chip"><div class="sl">DEF</div><div class="sv" id="g1-hdr-def">5</div></div>
+        </div>
+        <div class="g-bars-row">
+          <div class="g-bar-wrap g-bar-hp">
+            <div class="g-bar-label"><span>HP</span><span><span id="g1-hp-val">30</span>/<span id="g1-hp-max">30</span></span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g1-hp-bar" style="width:100%"></div></div>
+          </div>
+          <div class="g-bar-wrap g-bar-mp">
+            <div class="g-bar-label"><span>MP</span><span><span id="g1-mp-val">20</span>/<span id="g1-mp-max">20</span></span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g1-mp-bar" style="width:100%"></div></div>
+          </div>
+          <div class="g-bar-wrap g-bar-xp">
+            <div class="g-bar-label"><span>XP</span><span id="g1-xp-text">0/20</span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g1-xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="g-gold-row"><span>Gold: </span>&#127881; <span id="g1-gold">10</span>g</div>
+      </div>
+      <div class="g-nav-row">
+        <div class="g-nav-btn active" id="g1-nav-world" onclick="g1ShowView('world')"><span class="ni">&#128506;</span>WORLD</div>
+        <div class="g-nav-btn" id="g1-nav-inv" onclick="g1ShowView('inv')"><span class="ni">&#127876;</span>BAG</div>
+        <div class="g-nav-btn" id="g1-nav-save" onclick="g1SaveGame()"><span class="ni">&#128190;</span>SAVE</div>
+      </div>
+      <div class="g-main-area" id="g1-main-area"></div>
+    </div>
+  </div>
+  <div class="g-msg-overlay" id="g1-msg-overlay">
+    <div class="g-msg-box">
+      <h2 id="g1-msg-title">Notice</h2>
+      <p id="g1-msg-body">...</p>
+      <div class="g-msg-buttons" id="g1-msg-buttons"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==============================================
+     GAME 2 WRAPPER
+============================================== -->
+<div id="game2-wrapper" class="game-wrapper">
+  <button class="back-to-hub" onclick="backToHub()">&#8592; MENU</button>
+  <div class="g-screen" id="g2-container" style="max-width:680px;margin:0 auto;padding:12px;">
+
+    <div id="g2-title">
+      <div class="hub-stars"></div>
+      <div class="g-title-logo">REALM<br>OF<br>REGIONS</div>
+      <div class="g-title-sub" style="color:#ff6b2b;letter-spacing:4px;">&mdash; 2 &mdash;</div>
+      <div class="g-title-sub">by Simon Iacopelli</div>
+      <div class="g-name-input-wrap">
+        <label>YOUR NAME</label>
+        <input type="text" id="g2-name-input" placeholder="Enter your name..." maxlength="16" autocomplete="off">
+      </div>
+      <button class="g-btn g-btn-gold" onclick="g2StartGame()">&#9876; BEGIN ADVENTURE</button>
+      <div class="g-tip" style="margin-top:24px;">Forest &bull; Mountain &bull; Lava &bull; Frost &bull; Shadow</div>
+    </div>
+
+    <div id="g2-game" style="display:none;">
+      <div class="g-game-header">
+        <div class="g-player-name-row">
+          <div class="g-player-name-display" id="g2-hdr-name">Hero</div>
+          <div class="g-level-badge">LV <span id="g2-hdr-level">1</span></div>
+        </div>
+        <div class="g-stats-row">
+          <div class="g-stat-chip"><div class="sl">ATK</div><div class="sv" id="g2-hdr-atk">5</div></div>
+          <div class="g-stat-chip"><div class="sl">MAG</div><div class="sv" id="g2-hdr-mag">5</div></div>
+          <div class="g-stat-chip"><div class="sl">PWR</div><div class="sv" id="g2-hdr-pwr">5</div></div>
+          <div class="g-stat-chip"><div class="sl">DEF</div><div class="sv" id="g2-hdr-def">5</div></div>
+        </div>
+        <div class="g-bars-row">
+          <div class="g-bar-wrap g-bar-hp">
+            <div class="g-bar-label"><span>HP</span><span><span id="g2-hp-val">30</span>/<span id="g2-hp-max">30</span></span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g2-hp-bar" style="width:100%"></div></div>
+          </div>
+          <div class="g-bar-wrap g-bar-mp">
+            <div class="g-bar-label"><span>MP</span><span><span id="g2-mp-val">20</span>/<span id="g2-mp-max">20</span></span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g2-mp-bar" style="width:100%"></div></div>
+          </div>
+          <div class="g-bar-wrap g-bar-xp">
+            <div class="g-bar-label"><span>XP</span><span id="g2-xp-text">0/20</span></div>
+            <div class="g-bar-track"><div class="g-bar-fill" id="g2-xp-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="g-gold-row"><span>Gold: </span>&#127881; <span id="g2-gold">10</span>g</div>
+      </div>
+      <div class="g-nav-row">
+        <div class="g-nav-btn active" id="g2-nav-world" onclick="g2ShowView('world')"><span class="ni">&#128506;</span>WORLD</div>
+        <div class="g-nav-btn" id="g2-nav-inv" onclick="g2ShowView('inv')"><span class="ni">&#127876;</span>BAG</div>
+      </div>
+      <div class="g-main-area" id="g2-main-area"></div>
+    </div>
+  </div>
+  <div class="g-msg-overlay" id="g2-msg-overlay">
+    <div class="g-msg-box">
+      <h2 id="g2-msg-title">Notice</h2>
+      <p id="g2-msg-body">...</p>
+      <div class="g-msg-buttons" id="g2-msg-buttons"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==============================================
+     GAME 3 WRAPPER
+============================================== -->
+<div id="game3-wrapper" class="game-wrapper">
+  <button class="back-to-hub" onclick="backToHub()">&#8592; MENU</button>
+  <div class="g-screen" id="g3-container" style="max-width:680px;margin:0 auto;padding:12px;">
+
+    <div id="g3-title">
+      <div class="hub-stars"></div>
+      <div class="g-title-logo">REALM<br>OF<br>REGIONS</div>
+      <div class="g-title-sub" style="color:#c9922a;letter-spacing:4px;">III &bull; THE DESERT AWAKENS</div>
+      <div class="g-title-sub">by Simon Iacopelli</div>
+      <div class="g-name-input-wrap">
+        <label>YOUR NAME</label>
+        <input type="text" id="g3-name-input" placeholder="Enter your name..." maxlength="16" autocomplete="off">
+      </div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:11px;color:#f5c542;letter-spacing:2px;margin-bottom:12px;">Select Mode</div>
+      <div style="display:flex;gap:12px;margin-bottom:20px;">
+        <button class="g-btn g-btn-gold g-btn-sm" id="g3-mode-1p" onclick="g3SelectMode(1)">&#9876; 1 Player</button>
+        <button class="g-btn g-btn-outline g-btn-sm" id="g3-mode-2p" onclick="g3SelectMode(2)">&#9876;&#9876; 2 Player</button>
+      </div>
+      <button class="g-btn g-btn-gold" onclick="g3StartGame()">&#9876; BEGIN ADVENTURE</button>
+      <div class="g-tip" style="margin-top:24px;">Forest &bull; Mountain &bull; Lava &bull; Frost &bull; Shadow &bull; Desert</div>
+    </div>
+
+    <div id="g3-game" style="display:none;">
+      <!-- G3 tattle popup -->
+      <div class="g3-tattle-popup" id="g3-tattle-popup" onclick="g3CloseTattlePopup()">
+        <div class="g3-tattle-box" onclick="event.stopPropagation()">
+          <div class="g3-tattle-title">&#128218; Tattle Book</div>
+          <div id="g3-tattle-popup-content"></div>
+          <button class="g-btn g-btn-outline g-btn-sm" onclick="g3CloseTattlePopup()" style="margin-top:12px;width:100%">Close</button>
+        </div>
+      </div>
+
+      <div class="g-game-header">
+        <div class="g-player-name-row">
+          <div class="g-player-name-display" id="g3-hdr-name">Hero</div>
+          <div class="g-level-badge">LV <span id="g3-hdr-level">1</span></div>
+        </div>
+        <div class="g-stats-row">
+          <div class="g-stat-chip"><div class="sl">HP</div><div class="sv" id="g3-hdr-hp">40</div></div>
+          <div class="g-stat-chip"><div class="sl">MP</div><div class="sv" id="g3-hdr-mp">20</div></div>
+          <div class="g-stat-chip"><div class="sl">ATK</div><div class="sv" id="g3-hdr-atk">5</div></div>
+          <div class="g-stat-chip"><div class="sl">DEF</div><div class="sv" id="g3-hdr-def">5</div></div>
+        </div>
+        <div class="g-gold-row"><span>Gold: </span>&#127881; <span id="g3-gold">0</span>g &nbsp; XP <span id="g3-xp">0</span>/<span id="g3-xpnext">20</span> &nbsp; LV<span id="g3-lv">1</span></div>
+      </div>
+      <div class="g-nav-row">
+        <div class="g-nav-btn active" id="g3-nav-world" onclick="g3ShowMap()"><span class="ni">&#128506;</span>WORLD</div>
+        <div class="g-nav-btn" id="g3-nav-shop" onclick="g3OpenShop()"><span class="ni">&#9876;</span>SHOP</div>
+        <div class="g-nav-btn" id="g3-nav-inv" onclick="g3OpenInventory()"><span class="ni">&#127876;</span>INV</div>
+      </div>
+      <div class="g-main-area" id="g3-main-area"></div>
+    </div>
+  </div>
+  <div class="g-msg-overlay" id="g3-msg-overlay">
+    <div class="g-msg-box">
+      <h2 id="g3-msg-title">Notice</h2>
+      <p id="g3-msg-body">...</p>
+      <div class="g-msg-buttons" id="g3-msg-buttons"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ==============================================
+//  HUB
+// ==============================================
+function launchGame(n) {
+  document.getElementById('hub').style.display = 'none';
+  document.getElementById('game'+n+'-wrapper').classList.add('active');
+}
+function backToHub() {
+  document.querySelectorAll('.game-wrapper').forEach(function(w){ w.classList.remove('active'); });
+  document.getElementById('hub').style.display = 'flex';
+}
+
+// ==============================================
+//  SHARED AUDIO
+// ==============================================
+var _actx = null;
+function _getCtx() {
+  if (!_actx) { try { _actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
+  if (_actx && _actx.state !== 'running') { try { _actx.resume(); } catch(e){} }
+  return _actx;
+}
+function _note(freq,type,start,end,vol) {
+  var ctx = _getCtx(); if (!ctx) return;
+  try {
+    var now = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination); o.type = type||'square'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.001,now+start); g.gain.linearRampToValueAtTime(vol||0.3,now+start+0.01);
+    g.gain.setValueAtTime(vol||0.3,now+end-0.02); g.gain.linearRampToValueAtTime(0.001,now+end);
+    o.start(now+start); o.stop(now+end+0.01);
+  } catch(e) {}
+}
+var SFX = {
+  attack:  function(){ _note(220,'square',0,0.1,0.4); _note(160,'square',0.08,0.2,0.3); },
+  hit:     function(){ _note(110,'square',0,0.12,0.5); _note(80,'sawtooth',0.06,0.2,0.3); },
+  magic:   function(){ _note(440,'sine',0,0.1,0.3); _note(550,'sine',0.1,0.22,0.3); _note(660,'sine',0.2,0.34,0.3); },
+  heal:    function(){ _note(330,'sine',0,0.15,0.3); _note(440,'sine',0.13,0.28,0.3); _note(550,'sine',0.26,0.44,0.4); },
+  victory: function(){ _note(523,'square',0,0.1,0.3); _note(659,'square',0.14,0.28,0.3); _note(784,'square',0.3,0.46,0.3); _note(1047,'square',0.48,0.7,0.4); },
+  defeat:  function(){ _note(300,'sawtooth',0,0.15,0.4); _note(250,'sawtooth',0.16,0.32,0.3); _note(200,'sawtooth',0.33,0.55,0.3); },
+  levelup: function(){ _note(261,'sine',0,0.1,0.3); _note(329,'sine',0.11,0.23,0.3); _note(392,'sine',0.25,0.39,0.3); _note(523,'sine',0.41,0.57,0.3); _note(659,'sine',0.59,0.8,0.4); },
+  spare:   function(){ _note(440,'sine',0,0.08,0.3); _note(550,'sine',0.09,0.2,0.3); },
+  shop:    function(){ _note(440,'sine',0,0.12,0.3); _note(550,'sine',0.13,0.27,0.3); },
+  tattle:  function(){ _note(660,'sine',0,0.1,0.3); _note(880,'sine',0.11,0.23,0.3); },
+  freeze:  function(){ _note(800,'triangle',0,0.1,0.3); _note(600,'triangle',0.1,0.22,0.3); _note(400,'triangle',0.22,0.36,0.3); },
+  drain:   function(){ _note(300,'sawtooth',0,0.12,0.3); _note(250,'sawtooth',0.12,0.26,0.3); _note(200,'sawtooth',0.26,0.42,0.3); },
+  coin:    function(){ _note(880,'sine',0,0.09,0.3); _note(1100,'sine',0.1,0.21,0.3); },
+  boss:    function(){ _note(150,'sawtooth',0,0.2,0.4); _note(120,'sawtooth',0.22,0.44,0.3); _note(100,'sawtooth',0.45,0.7,0.3); },
+};
+
+// ==============================================
+//  SHARED LEVELS
+// ==============================================
+var LEVELS = [
+  {lvl:1,xp:0},{lvl:2,xp:20},{lvl:3,xp:40},{lvl:4,xp:80},{lvl:5,xp:160},
+  {lvl:6,xp:320},{lvl:7,xp:640},{lvl:8,xp:1280},{lvl:9,xp:2560},{lvl:10,xp:5120},{lvl:11,xp:10240}
+];
+function xpForNext(lvl) { var n=LEVELS.find(function(l){return l.lvl===lvl+1;}); return n?n.xp:null; }
+
+// ==============================================
+//  GAME 1
+// ==============================================
+var G1_SHOP_ITEMS = [
+  {id:'potion',name:'Potion',icon:'\u{1F9EA}',cost:20,desc:'Recover 10 HP',type:'heal',val:10},
+  {id:'sword',name:'Sword',icon:'\u2694\uFE0F',cost:50,desc:'+5 Attack',type:'stat',stat:'atk',val:5},
+  {id:'potion_ult',name:'Potion Ultimate',icon:'\u2728',cost:50,desc:'Recover 30 HP',type:'heal',val:30},
+  {id:'bagel',name:'Bagel',icon:'\u{1F96F}',cost:80,desc:'Recover 15 HP',type:'heal',val:15},
+  {id:'chestplate',name:'Chest Plate',icon:'\u{1F6E1}\uFE0F',cost:120,desc:'+5 Defense',type:'stat',stat:'def',val:5},
+  {id:'hotdog',name:'Hotdog',icon:'\u{1F32D}',cost:200,desc:'Recover 45 HP',type:'heal',val:45},
+  {id:'iron_sword',name:'Iron Sword',icon:'\u{1F5E1}\uFE0F',cost:70,desc:'+5 Attack',type:'stat',stat:'atk',val:5},
+  {id:'magic_tome1',name:'Magic Tome 1',icon:'\u{1F4D8}',cost:150,desc:'+4 Magic',type:'stat',stat:'mag',val:4},
+  {id:'magic_tome2',name:'Magic Tome 2',icon:'\u{1F4D7}',cost:250,desc:'+7 Magic',type:'stat',stat:'mag',val:7},
+  {id:'magic_tome3',name:'Magic Tome 3',icon:'\u{1F4D5}',cost:390,desc:'+13 Magic',type:'stat',stat:'mag',val:13},
+  {id:'dragon_plate',name:'Dragon Plate',icon:'\u{1F409}',cost:40,desc:'+10 Defense',type:'stat',stat:'def',val:10},
+  {id:'dum_dum',name:'Dum Dum',icon:'\u{1F36D}',cost:60,desc:'Recover 50 HP',type:'heal',val:50},
+];
+var G1_REGIONS = [
+  {id:'forest',name:'Forest Region',icon:'\u{1F332}',cls:'forest',
+   enemies:[
+     {name:'Slime',icon:'\u{1F7E2}',hp:12,xp:20,gold:[3,8],atk:3},
+     {name:'Lizard',icon:'\u{1F98E}',hp:16,xp:20,gold:[4,9],atk:4},
+     {name:'Forest Skeleton',icon:'\u{1F480}',hp:10,xp:20,gold:[3,7],atk:3},
+     {name:'Rose',icon:'\u{1F339}',hp:20,xp:20,gold:[5,12],atk:5},
+     {name:'Tree Imp',icon:'\u{1F33F}',hp:10,xp:20,gold:[3,7],atk:3},
+     {name:'Flower Petal',icon:'\u{1F338}',hp:18,xp:20,gold:[4,10],atk:4},
+   ],
+   boss:{name:'Forest Wizard',icon:'\u{1F9D9}',hp:36,xp:40,gold:[20,35],atk:8},
+   secretBoss:{name:'Shadow Wizard',icon:'\u{1F311}',hp:80,xp:60,gold:[50,80],atk:12,isSecret:true},
+   bossDefeated:false,secretBossDefeated:false},
+  {id:'mountain',name:'Mountain Region',icon:'\u26F0\uFE0F',cls:'mountain',
+   enemies:[
+     {name:'Skeleton',icon:'\u{1F480}',hp:26,xp:20,gold:[6,12],atk:6},
+     {name:'Cloud',icon:'\u2601\uFE0F',hp:24,xp:20,gold:[5,11],atk:5},
+     {name:'Sky Knight',icon:'\u{1FA96}',hp:30,xp:20,gold:[7,14],atk:7},
+     {name:'Mountain Lion',icon:'\u{1F981}',hp:32,xp:20,gold:[8,15],atk:7},
+   ],
+   boss:{name:'Mountain Wizard',icon:'\u{1F9D9}',hp:44,xp:45,gold:[30,50],atk:10},
+   secretBoss:{name:'Storm Wizard',icon:'\u26A1',hp:100,xp:60,gold:[60,90],atk:15,isSecret:true},
+   bossDefeated:false,secretBossDefeated:false},
+  {id:'lava',name:'Lava Region',icon:'\u{1F30B}',cls:'lava',
+   enemies:[
+     {name:'Flame',icon:'\u{1F525}',hp:42,xp:20,gold:[8,16],atk:9},
+     {name:'Obsidian Golem',icon:'\u{1FAA8}',hp:48,xp:20,gold:[10,18],atk:10},
+     {name:'Flame Dragon',icon:'\u{1F409}',hp:55,xp:20,gold:[12,22],atk:12},
+     {name:'Fire Knight',icon:'\u{1F6E1}\uFE0F',hp:50,xp:20,gold:[10,20],atk:11},
+   ],
+   boss:{name:'Flare Wizard',icon:'\u{1F9D9}',hp:60,xp:45,gold:[40,65],atk:14},
+   secretBoss:{name:'Inferno Wizard',icon:'\u{1F30B}',hp:120,xp:60,gold:[70,110],atk:18,isSecret:true},
+   bossDefeated:false,secretBossDefeated:false},
+  {id:'snow',name:'Frost Region',icon:'\u2744\uFE0F',cls:'snow',
+   enemies:[
+     {name:'Ice Slime',icon:'\u{1F9CA}',hp:64,xp:20,gold:[12,20],atk:12},
+     {name:'Frozen Skeleton',icon:'\u{1F480}',hp:58,xp:20,gold:[11,18],atk:11},
+     {name:'Igloo',icon:'\u{1F3D4}\uFE0F',hp:60,xp:20,gold:[10,17],atk:10},
+     {name:'Ice Golem',icon:'\u{1FAA8}',hp:66,xp:20,gold:[13,22],atk:13},
+     {name:'Ice Dragon',icon:'\u{1F432}',hp:78,xp:20,gold:[15,28],atk:15},
+   ],
+   boss:{name:'Frost Wizard',icon:'\u{1F9D9}\u200D\u2642\uFE0F',hp:250,xp:45,gold:[80,150],atk:20,isFinal:true},
+   secretBoss:{name:'Void Wizard',icon:'\u{1F300}',hp:300,xp:80,gold:[120,200],atk:25,isSecret:true,isFinal:true},
+   bossDefeated:false,secretBossDefeated:false},
+];
+var G1_ACT_LINES = {
+  'Slime':'The Slime wobbles nervously. It just wants to bounce around the forest!',
+  'Lizard':'The Lizard flicks its tongue. It looks more scared than angry.',
+  'Forest Skeleton':'The Forest Skeleton rattles its bones. It seems lost and confused.',
+  'Rose':'The Rose sways gently. It bloomed here and never meant any harm.',
+  'Tree Imp':'The Tree Imp hides behind a leaf. It was just playing a prank!',
+  'Flower Petal':'The Flower Petal drifts softly. It only attacks when startled.',
+  'Forest Wizard':'The Forest Wizard mutters spells nervously. Deep down he just loves his forest.',
+  'Skeleton':'The Skeleton clacks its jaw. It seems to have forgotten why it\'s even fighting.',
+  'Cloud':'The Cloud puffs up sadly. It drifted here by accident on the wind.',
+  'Sky Knight':'The Sky Knight hesitates. Maybe this battle isn\'t worth fighting after all.',
+  'Mountain Lion':'The Mountain Lion growls softly. It is only protecting its territory.',
+  'Mountain Wizard':'The Mountain Wizard lowers his staff. He looks tired of battling adventurers.',
+  'Flame':'The Flame flickers anxiously. It burns because it doesn\'t know how to stop.',
+  'Obsidian Golem':'The Obsidian Golem pauses. Deep inside the rock, something stirs with doubt.',
+  'Flame Dragon':'The Flame Dragon snorts smoke. It roars, but its eyes look lonely.',
+  'Fire Knight':'The Fire Knight stands down for a moment. Honor matters more than victory.',
+  'Flare Wizard':'The Flare Wizard sweats. Maybe torching adventurers wasn\'t a great career choice.',
+  'Ice Slime':'The Ice Slime shivers. It is very cold and just wants a warm hug.',
+  'Frozen Skeleton':'The Frozen Skeleton chatters its teeth. It has been frozen for a very long time.',
+  'Igloo':'The Igloo creaks. It didn\'t ask to come alive and is very confused.',
+  'Ice Golem':'The Ice Golem pauses mid-swing. A single tear freezes on its cheek.',
+  'Ice Dragon':'The Ice Dragon roars, then stops. Something about you reminds it of a friend.',
+  'Frost Wizard':'The Frost Wizard stares you down. For just a moment his icy glare softens.',
+};
+var G1_BOSS_LAST_WORDS = {
+  'Forest Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Mountain Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Flare Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Frost Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Shadow Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Storm Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Inferno Wizard':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! BUT YOU CANNOT DEFEAT THE VOID WIZARD!',
+  'Void Wizard':'NOOOOOOO! HOW COULD YOU HAVE BEAT ME!? I\'M THE STRONGEST WIZARD IN THE WORLD!',
+};
+
+var g1Player, g1Battle, g1Regions, g1CurrentView;
+
+function g1Reset() {
+  g1Player = {name:'Hero',level:1,xp:0,hp:30,maxHp:30,mp:20,maxMp:20,atk:5,mag:5,pwr:5,def:5,gold:10,
+    inventory:[{id:'potion',name:'Potion',icon:'\u{1F9EA}',qty:3,type:'heal',val:10}],
+    regionsUnlocked:['forest'],killStreak:{}};
+  g1Battle = null;
+  g1Regions = JSON.parse(JSON.stringify(G1_REGIONS));
+  g1CurrentView = 'world';
+}
+
+function g1StartGame() {
+  var name = document.getElementById('g1-name-input').value.trim()||'Hero';
+  g1Player.name = name;
+  document.getElementById('g1-title').style.display = 'none';
+  document.getElementById('g1-game').style.display = 'block';
+  g1UpdateHeader(); g1ShowView('world');
+}
+
+function g1SaveGame() {
+  try {
+    localStorage.setItem('ror_v1_version','3');
+    localStorage.setItem('ror_v1_player',JSON.stringify(g1Player));
+    localStorage.setItem('ror_v1_regions',JSON.stringify(g1Regions));
+    g1ShowMsg('Game Saved!','Your progress has been saved.',[{label:'OK',fn:function(){g1CloseMsg();}}]);
+  } catch(e) { g1ShowMsg('Save Failed','Could not save.',[{label:'OK',fn:function(){g1CloseMsg();}}]); }
+}
+
+function g1LoadGame() {
+  try {
+    if (localStorage.getItem('ror_v1_version')!=='3') return false;
+    var p=localStorage.getItem('ror_v1_player'), r=localStorage.getItem('ror_v1_regions');
+    if (!p) return false;
+    g1Player=JSON.parse(p); if(r) g1Regions=JSON.parse(r);
+    G1_REGIONS.forEach(function(fr,i){ if(!g1Regions[i]||g1Regions[i].id!==fr.id) g1Regions.splice(i,0,JSON.parse(JSON.stringify(fr))); });
+    return true;
+  } catch(e){return false;}
+}
+
+function g1UpdateHeader() {
+  var p=g1Player;
+  document.getElementById('g1-hdr-name').textContent=p.name;
+  document.getElementById('g1-hdr-level').textContent=p.level;
+  document.getElementById('g1-hdr-atk').textContent=p.atk;
+  document.getElementById('g1-hdr-mag').textContent=p.mag;
+  document.getElementById('g1-hdr-pwr').textContent=p.pwr;
+  document.getElementById('g1-hdr-def').textContent=p.def;
+  document.getElementById('g1-hp-val').textContent=p.hp;
+  document.getElementById('g1-hp-max').textContent=p.maxHp;
+  document.getElementById('g1-mp-val').textContent=p.mp;
+  document.getElementById('g1-mp-max').textContent=p.maxMp;
+  document.getElementById('g1-gold').textContent=p.gold;
+  document.getElementById('g1-hp-bar').style.width=Math.max(0,p.hp/p.maxHp*100)+'%';
+  document.getElementById('g1-mp-bar').style.width=Math.max(0,p.mp/p.maxMp*100)+'%';
+  var nxt=LEVELS.find(function(l){return l.lvl===p.level+1;});
+  if(nxt){
+    var cur=LEVELS.find(function(l){return l.lvl===p.level;});
+    document.getElementById('g1-xp-bar').style.width=Math.min(100,(p.xp-cur.xp)/(nxt.xp-cur.xp)*100)+'%';
+    document.getElementById('g1-xp-text').textContent=p.xp+'/'+nxt.xp;
+  } else { document.getElementById('g1-xp-bar').style.width='100%'; document.getElementById('g1-xp-text').textContent='MAX'; }
+}
+
+function g1ShowView(v) {
+  g1CurrentView=v;
+  ['world','inv','save'].forEach(function(x){ var el=document.getElementById('g1-nav-'+x); if(el) el.classList.toggle('active',x===v); });
+  var area=document.getElementById('g1-main-area');
+  if(v==='world') g1RenderWorld(area);
+  else if(v==='inv') g1RenderInventory(area);
+}
+
+function g1RenderWorld(area) {
+  var allBeaten=g1Regions.every(function(r){return r.bossDefeated;});
+  var banner=allBeaten?'<div style="background:linear-gradient(135deg,#2a1a00,#5a3a00);border:2px solid #f5c542;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px;color:#f5c542;font-size:11px;font-weight:700;">\u{1F3C6} GAME COMPLETE!</div>':'';
+  area.innerHTML=banner+'<div class="g-area-title">\u{1F5FA}\uFE0F WHERE TO GO?</div><div style="margin-bottom:12px;"><div class="g-region-grid" id="g1-region-grid"></div></div><hr class="g-divider"><div class="g-town-grid"><div class="g-town-btn" onclick="g1ShowShop()"><span class="ti">\u{1F3EA}</span><div class="tn">ITEM STORE</div></div><div class="g-town-btn" onclick="g1ShowInn()"><span class="ti">\u{1F3E8}</span><div class="tn">INN &amp; REST</div></div></div>';
+  var grid=document.getElementById('g1-region-grid');
+  g1Regions.forEach(function(r,i){
+    var unlocked=g1Player.regionsUnlocked.includes(r.id);
+    var div=document.createElement('div');
+    div.className='g-region-btn gr-'+r.id+(unlocked?'':' locked');
+    div.innerHTML='<span class="ri">'+r.icon+'</span><div class="rn">'+r.name+'</div><div class="rr">'+(unlocked?(r.bossDefeated?'\u2705 Cleared':'Enter'):'\u{1F512} Locked')+'</div>';
+    if(unlocked) div.onclick=function(){g1ShowRegion(i);};
+    grid.appendChild(div);
+  });
+}
+
+function g1GetBossBtn(r,idx) {
+  if(r.id==='snow'&&r.bossDefeated) return '<div style="padding:14px;border-radius:10px;border:2px solid #444;background:#1a1025;font-size:11px;color:#555;text-align:center;">\u{1F451} Frost Wizard - Defeated</div>';
+  var label=r.bossDefeated?'Rematch Boss':'Challenge Boss';
+  return '<button class="g-btn g-btn-full" style="background:linear-gradient(135deg,#7a2200,#c0390b);color:white;padding:14px;border:2px solid #ff6b2b;border-radius:10px;font-size:9px;cursor:pointer;font-family:\'Press Start 2P\',monospace;" onclick="g1StartBattle('+idx+',true)">\u{1F451} '+label+'</button>';
+}
+
+function g1GetSecretBossBtn(idx) {
+  var r=g1Regions[idx];
+  if(r.id==='snow'&&r.secretBossDefeated) return '<div style="padding:14px;border-radius:10px;border:2px solid #333;background:#1a1025;font-size:8px;color:#555;text-align:center;">\u{1F300} Void Wizard - Defeated</div>';
+  var streak=g1Player.killStreak[r.id]||0, unlocked=streak>=3;
+  var label=r.secretBossDefeated?'\u{1F501} Rematch Secret Boss':(unlocked?'\u26A0\uFE0F Challenge Secret Boss':'\u{1F512} Secret Boss ('+streak+'/3 kills)');
+  if(unlocked) return '<button class="g-btn g-btn-full" style="background:linear-gradient(135deg,#2a006a,#6a00cc);color:white;border:2px solid #cc88ff;padding:14px;border-radius:10px;font-family:\'Press Start 2P\',monospace;font-size:9px;cursor:pointer;" onclick="g1StartSecretBoss('+idx+')">'+label+'</button>';
+  return '<button class="g-btn g-btn-full" style="background:#1a1025;color:#555;border:2px solid #333;padding:14px;border-radius:10px;font-family:\'Press Start 2P\',monospace;font-size:9px;cursor:not-allowed;" disabled>'+label+'</button>';
+}
+
+function g1ShowRegion(idx) {
+  var r=g1Regions[idx];
+  var area=document.getElementById('g1-main-area');
+  area.innerHTML='<span class="g-back-link" onclick="g1ShowView(\'world\')">\u2190 Back to World</span><div class="g-region-header '+r.cls+'"><div class="rhi">'+r.icon+'</div><div class="rhn">'+r.name.toUpperCase()+'</div></div><div style="display:flex;flex-direction:column;gap:10px;"><button class="g-btn g-btn-gold g-btn-full" onclick="g1StartBattle('+idx+',false)">\u2694\uFE0F Fight Enemy</button>'+g1GetBossBtn(r,idx)+g1GetSecretBossBtn(idx)+'</div>';
+}
+
+function g1ShowShop() {
+  var area=document.getElementById('g1-main-area');
+  var html='<span class="g-back-link" onclick="g1ShowView(\'world\')">\u2190 Back to World</span><div class="g-area-title">\u{1F3EA} ITEM STORE</div><div>';
+  G1_SHOP_ITEMS.forEach(function(item){
+    html+='<div class="g-shop-item"><div><div class="in">'+item.icon+' '+item.name+'</div><div class="id">'+item.desc+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="ip">'+item.cost+'g</div><button class="g-btn g-btn-gold g-btn-sm" onclick="g1BuyItem(\''+item.id+'\')">BUY</button></div></div>';
+  });
+  html+='</div>'; area.innerHTML=html;
+}
+
+function g1BuyItem(id) {
+  var item=G1_SHOP_ITEMS.find(function(i){return i.id===id;});
+  if(!item) return;
+  if(g1Player.gold<item.cost){g1ShowMsg('Not Enough Gold!','You need '+item.cost+'g to buy '+item.name+'.',[{label:'OK',fn:function(){g1CloseMsg();}}]);return;}
+  SFX.shop(); g1Player.gold-=item.cost;
+  if(item.type==='stat'){g1Player[item.stat]+=item.val;g1ShowMsg('Purchased!',item.icon+' '+item.name+' equipped! '+item.stat.toUpperCase()+' +'+item.val,[{label:'OK',fn:function(){g1CloseMsg();}}]);}
+  else{g1AddToInventory(item);g1ShowMsg('Purchased!',item.icon+' '+item.name+' added to your bag!',[{label:'OK',fn:function(){g1CloseMsg();}}]);}
+  g1UpdateHeader();
+}
+
+function g1AddToInventory(item){var e=g1Player.inventory.find(function(i){return i.id===item.id;});if(e)e.qty++;else g1Player.inventory.push({id:item.id,name:item.name,icon:item.icon,qty:1,type:item.type,val:item.val});}
+
+function g1ShowInn() {
+  var area=document.getElementById('g1-main-area');
+  area.innerHTML='<span class="g-back-link" onclick="g1ShowView(\'world\')">\u2190 Back to World</span><div class="g-area-title">\u{1F3E8} INN &amp; REST</div><div class="g-shop-item"><div><div class="in">\u{1F6CF}\uFE0F Rest</div><div class="id">Fully restore HP and MP</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="ip">15g</div><button class="g-btn g-btn-gold g-btn-sm" onclick="g1RestAtInn()">REST</button></div></div>';
+}
+function g1RestAtInn(){
+  if(g1Player.gold<15){g1ShowMsg('Not Enough Gold!','You need 15g to rest here.',[{label:'OK',fn:function(){g1CloseMsg();}}]);return;}
+  SFX.heal(); g1Player.gold-=15; g1Player.hp=g1Player.maxHp; g1Player.mp=g1Player.maxMp;
+  g1UpdateHeader(); g1ShowMsg('Well Rested!','HP and MP fully restored!',[{label:'OK',fn:function(){g1CloseMsg();}}]);
+}
+
+function g1RenderInventory(area){
+  area.innerHTML='<div class="g-area-title">\u{1F9F3} YOUR BAG</div>';
+  if(!g1Player.inventory.length){area.innerHTML+='<p style="text-align:center;color:#9a88bb;margin-top:20px;">Your bag is empty.</p>';return;}
+  var html='<div class="g-scroll-inner">';
+  g1Player.inventory.forEach(function(item){html+='<div class="g-inv-item"><div><span style="font-size:20px;">'+item.icon+'</span> <span style="font-weight:700;">'+item.name+'</span> <span style="font-size:11px;color:#9a88bb;">x'+item.qty+'</span></div><button class="g-btn g-btn-gold g-btn-sm" onclick="g1UseItem(\''+item.id+'\')">USE</button></div>';});
+  html+='</div>'; area.innerHTML+=html;
+}
+function g1UseItem(id){
+  var item=g1Player.inventory.find(function(i){return i.id===id;});if(!item)return;
+  if(item.type==='heal'){var before=g1Player.hp;g1Player.hp=Math.min(g1Player.maxHp,g1Player.hp+item.val);var gained=g1Player.hp-before;item.qty--;if(item.qty<=0)g1Player.inventory=g1Player.inventory.filter(function(i){return i.id!==id;});SFX.heal();g1UpdateHeader();g1ShowMsg('Item Used!',item.icon+' '+item.name+' restored '+gained+' HP!',[{label:'OK',fn:function(){g1CloseMsg();g1RenderInventory(document.getElementById('g1-main-area'));}}]);}
+}
+
+function g1StartSecretBoss(idx){
+  var r=g1Regions[idx],enemy=JSON.parse(JSON.stringify(r.secretBoss));
+  enemy.isBoss=true;enemy.isSecret=true;enemy.maxHp=enemy.hp;enemy.regionIdx=idx;
+  g1Battle={enemy:enemy,log:[],active:true,acted:false,defendCount:0};g1RenderBattle();
+}
+function g1StartBattle(idx,isBoss){
+  var r=g1Regions[idx],enemy;
+  if(isBoss){enemy=JSON.parse(JSON.stringify(r.boss));enemy.isBoss=true;}
+  else{var base=JSON.parse(JSON.stringify(r.enemies[Math.floor(Math.random()*r.enemies.length)]));enemy=base;enemy.isBoss=false;}
+  enemy.maxHp=enemy.hp;enemy.regionIdx=idx;
+  g1Battle={enemy:enemy,log:[],active:true,acted:false,defendCount:0};g1RenderBattle();
+}
+
+function g1RenderBattle(){
+  var area=document.getElementById('g1-main-area'),e=g1Battle.enemy,hpPct=Math.max(0,e.hp/e.maxHp*100);
+  var logHtml=g1Battle.log.slice(-4).map(function(l){return '<div class="g-log-line g-'+l.cls+'">'+l.text+'</div>';}).join('');
+  var canMagic=g1Player.mp>=5,hasHeal=g1Player.inventory.some(function(i){return i.type==='heal'&&i.qty>0;});
+  area.innerHTML='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.icon+'</span><div class="g-enemy-name">'+e.name+(e.isBoss?' \u{1F451}':'')+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+e.hp+'/'+e.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+hpPct+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div></div><div style="background:#1e1430;border:1px solid #5a3e8a;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><div class="g-bar-label" style="margin-bottom:4px;"><span>\u2764\uFE0F '+g1Player.name+'</span><span style="font-weight:700;color:'+(g1Player.hp<=g1Player.maxHp*0.25?'#e74c3c':'#f0e8ff')+';">'+g1Player.hp+' / '+g1Player.maxHp+' HP</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,g1Player.hp/g1Player.maxHp*100)+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div><div><div class="g-bar-label" style="margin-bottom:4px;"><span>\u{1F499} MP</span><span style="font-weight:700;">'+g1Player.mp+' / '+g1Player.maxMp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,g1Player.mp/g1Player.maxMp*100)+'%;background:linear-gradient(90deg,#1a5799,#3498db);"></div></div></div></div><div class="g-battle-log">'+( logHtml||'<span style="color:#9a88bb">A wild '+e.name+' appears!</span>')+'</div><div class="g-action-grid"><button class="g-action-btn" onclick="g1BattleAction(\'attack\')"><span class="ai">\u2694\uFE0F</span>ATTACK</button><button class="g-action-btn" onclick="g1BattleAction(\'magic\')" '+(canMagic?'':'disabled')+'><span class="ai">\u2728</span>MAGIC'+(canMagic?'':' (no MP)')+'</button><button class="g-action-btn" onclick="g1BattleAction(\'defend\')" '+(g1Battle.defendCount>=10?'disabled':'')+'><span class="ai">\u{1F6E1}\uFE0F</span>DEFEND'+(g1Battle.defendCount>=10?' (used up)':' ('+(10-g1Battle.defendCount)+' left)')+'</button><button class="g-action-btn" onclick="g1BattleAction(\'item\')" '+(hasHeal?'':'disabled')+'><span class="ai">\u{1F9F3}</span>ITEM'+(hasHeal?'':' (empty)')+'</button><button class="g-action-btn" onclick="g1BattleAction(\'act\')" style="border-color:#a78bfa;color:#a78bfa;"><span class="ai">\u{1F4AC}</span>ACT</button><button class="g-action-btn" onclick="g1BattleAction(\'spare\')" '+(g1Battle.acted?'style="border-color:#4ade80;color:#4ade80;"':'disabled')+'><span class="ai">\u{1F54A}\uFE0F</span>SPARE</button></div>';
+}
+
+function g1ShowItemPicker(){
+  var items=g1Player.inventory.filter(function(i){return i.type==='heal'&&i.qty>0;}),e=g1Battle.enemy,hpPct=Math.max(0,e.hp/e.maxHp*100),area=document.getElementById('g1-main-area');
+  var html='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.icon+'</span><div class="g-enemy-name">'+e.name+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+e.hp+'/'+e.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+hpPct+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div></div><div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#f5c542;text-align:center;margin-bottom:12px;">\u{1F9F3} CHOOSE AN ITEM</div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">';
+  items.forEach(function(item){html+='<div class="g-shop-item"><div><div class="in">'+item.icon+' '+item.name+' <span style="color:#9a88bb;font-size:11px;">x'+item.qty+'</span></div><div class="id">Recover '+item.val+' HP</div></div><button class="g-btn g-btn-gold g-btn-sm" onclick="g1UseItemInBattle(\''+item.id+'\')">USE</button></div>';});
+  html+='</div><button class="g-btn g-btn-outline g-btn-full" onclick="g1RenderBattle()">\u2190 Back</button>';
+  area.innerHTML=html;
+}
+function g1UseItemInBattle(id){
+  var item=g1Player.inventory.find(function(i){return i.id===id;}),e=g1Battle.enemy;if(!item||item.qty<=0)return;
+  var before=g1Player.hp;g1Player.hp=Math.min(g1Player.maxHp,g1Player.hp+item.val);var gained=g1Player.hp-before;
+  item.qty--;if(item.qty<=0)g1Player.inventory=g1Player.inventory.filter(function(i){return i.id!==id;});
+  g1Battle.log.push({text:'\u{1F9EA} Used '+item.name+', recovered '+gained+' HP!',cls:'log-good'});
+  g1Battle.log.push({text:'\u{1F635} '+e.name+' is confused and misses their turn!',cls:'log-good'});
+  SFX.heal();g1UpdateHeader();g1RenderBattle();
+}
+
+function g1BattleAction(action){
+  if(!g1Battle||!g1Battle.active)return;
+  var e=g1Battle.enemy,defending=false;
+  if(action==='attack'){SFX.attack();var dmg=Math.max(1,g1Player.atk+Math.floor(Math.random()*4));e.hp-=dmg;g1Battle.log.push({text:g1Player.name+' attacks for '+dmg+' damage!',cls:'log-player'});}
+  else if(action==='magic'){if(g1Player.mp<5)return;SFX.magic();g1Player.mp-=5;var dmg2=Math.max(1,g1Player.mag*2+Math.floor(Math.random()*6));e.hp-=dmg2;g1Battle.log.push({text:'\u2728 Magic blast hits for '+dmg2+' damage!',cls:'log-player'});g1UpdateHeader();}
+  else if(action==='defend'){if(g1Battle.defendCount>=10)return;defending=true;g1Battle.defendCount++;g1Battle.log.push({text:g1Player.name+' takes a defensive stance! ('+(10-g1Battle.defendCount)+' left)',cls:'log-good'});}
+  else if(action==='act'){var msg=G1_ACT_LINES[e.name]||e.name+' looks uncertain.';g1Battle.acted=true;g1Battle.log.push({text:'\u{1F4AC} '+msg,cls:'log-good'});g1Battle.log.push({text:'\u{1F300} '+e.name+' is touched and misses their turn!',cls:'log-good'});g1RenderBattle();return;}
+  else if(action==='spare'){
+    if(!g1Battle.acted)return;
+    if(e.isBoss){g1Battle.log.push({text:e.name+' is ENRAGED! One-hit KO!',cls:'log-enemy'});g1Player.hp=0;g1UpdateHeader();g1Battle.active=false;g1OnPlayerDefeated();return;}
+    SFX.spare();g1Battle.active=false;
+    g1ShowMsg('Spared! \u{1F54A}\uFE0F',e.name+' was spared and fled!',[
+      {label:'\u2694\uFE0F Fight Enemy',fn:function(){g1CloseMsg();g1StartBattle(e.regionIdx,false);}},
+      {label:'\u{1F451} Fight Boss',fn:function(){g1CloseMsg();g1StartBattle(e.regionIdx,true);}},
+      {label:'\u{1F5FA}\uFE0F World Map',fn:function(){g1CloseMsg();g1ShowView('world');}}
+    ]);return;
+  }
+  else if(action==='item'){var hs=g1Player.inventory.filter(function(i){return i.type==='heal'&&i.qty>0;});if(!hs.length)return;g1ShowItemPicker();return;}
+
+  if(e.hp<=0){e.hp=0;g1Battle.active=false;g1OnEnemyDefeated();return;}
+  setTimeout(function(){
+    if(!g1Battle||!g1Battle.active)return;
+    var rawDmg=Math.max(1,e.atk-Math.floor(g1Player.def/2)+Math.floor(Math.random()*4)),dmg=defending?0:rawDmg;
+    g1Player.hp-=dmg;if(g1Player.hp<0)g1Player.hp=0;
+    if(defending){g1Battle.enemy.hp-=10;if(g1Battle.enemy.hp<0)g1Battle.enemy.hp=0;g1Battle.log.push({text:g1Player.name+' blocks! '+e.name+' takes 10 reflected damage!',cls:'log-good'});g1UpdateHeader();if(g1Battle.enemy.hp<=0){g1Battle.active=false;g1OnEnemyDefeated();return;}}
+    else{SFX.hit();g1Battle.log.push({text:e.name+' attacks for '+dmg+' damage!',cls:'log-enemy'});}
+    g1UpdateHeader();if(g1Player.hp<=0){g1Battle.active=false;g1OnPlayerDefeated();return;}
+    g1RenderBattle();
+  },300);
+  g1RenderBattle();
+}
+
+function g1OnEnemyDefeated(){
+  var e=g1Battle.enemy,goldGain=e.gold[0]+Math.floor(Math.random()*(e.gold[1]-e.gold[0]));
+  g1Player.gold+=goldGain;g1Player.xp+=e.xp;
+  var r=g1Regions[e.regionIdx];
+  if(e.isSecret){r.secretBossDefeated=true;}
+  else if(e.isBoss){r.bossDefeated=true;}
+  else{if(!g1Player.killStreak[r.id])g1Player.killStreak[r.id]=0;g1Player.killStreak[r.id]++;}
+  g1UnlockNextRegion(e.regionIdx);
+  var leveledUp=false,newLevel=g1Player.level;
+  while(true){var nxt=LEVELS.find(function(l){return l.lvl===g1Player.level+1;});if(!nxt)break;if(g1Player.xp>=nxt.xp){g1Player.level++;g1Player.maxHp+=20;g1Player.hp=g1Player.maxHp;g1Player.maxMp+=4;g1Player.mp=g1Player.maxMp;g1Player.pwr+=2;leveledUp=true;newLevel=g1Player.level;}else break;}
+  g1UpdateHeader();SFX.victory();
+  var lastWords=(e.isBoss||e.isSecret)?(G1_BOSS_LAST_WORDS[e.name]||''):'';
+  var lw=lastWords?'\n\n"'+lastWords+'"':'';
+  var msg=e.isBoss?'\u{1F451} '+e.name+' defeated!'+lw+'\n\nYou earned '+e.xp+' XP and '+goldGain+'g!':e.name+' defeated!\n\nYou earned '+e.xp+' XP and '+goldGain+'g!';
+  var buttons=[];
+  if(e.isBoss&&r.bossDefeated){buttons.push({label:'Continue',fn:function(){g1CloseMsg();g1ShowView('world');}});}
+  else{buttons.push({label:'Fight Again',fn:function(){g1CloseMsg();g1StartBattle(e.regionIdx,false);}});buttons.push({label:'World Map',fn:function(){g1CloseMsg();g1ShowView('world');}});}
+  if(leveledUp){SFX.levelup();g1ShowMsg('LEVEL UP! \u{1F31F}','\u2B06\uFE0F Level '+newLevel+'!\nHP and MP restored!\n\n'+msg,buttons);}
+  else if(e.isSecret){g1ShowMsg('\u{1F300} SECRET BOSS DEFEATED!',e.name+' vanquished!\nYou earned '+e.xp+' XP and '+goldGain+'g!'+(e.isFinal?'\n\nYou have truly conquered the Realm of Regions!':''),[{label:'Continue',fn:function(){g1CloseMsg();g1ShowView('world');}}]);}
+  else if(e.isBoss&&e.isFinal){g1ShowMsg('\u{1F3C6} YOU WIN!','The Frost Wizard is defeated!\n'+g1Player.name+' has conquered the Realm of Regions!',[{label:'Celebrate!',fn:function(){g1CloseMsg();g1ShowView('world');}}]);}
+  else{g1ShowMsg(e.isBoss?'Boss Defeated! \u{1F451}':'Victory! \u2694\uFE0F',msg,buttons);}
+}
+function g1OnPlayerDefeated(){SFX.defeat();g1UpdateHeader();if(g1Battle.enemy.regionIdx!==undefined)g1Player.killStreak[g1Regions[g1Battle.enemy.regionIdx].id]=0;g1ShowMsg('\u{1F480} Defeated...',g1Player.name+' has fallen in battle!',[{label:'To World Map',fn:function(){g1CloseMsg();g1Player.hp=g1Player.maxHp;g1UpdateHeader();g1ShowView('world');}}]);}
+function g1UnlockNextRegion(idx){var r=g1Regions[idx];if(!r.bossDefeated)return;var m={forest:'mountain',mountain:'lava',lava:'snow'};var nid=m[r.id];if(nid&&!g1Player.regionsUnlocked.includes(nid))g1Player.regionsUnlocked.push(nid);}
+function g1ShowMsg(title,body,buttons){document.getElementById('g1-msg-title').textContent=title;document.getElementById('g1-msg-body').textContent=body;var bd=document.getElementById('g1-msg-buttons');bd.innerHTML='';buttons.forEach(function(b){var btn=document.createElement('button');btn.className='g-btn g-btn-gold';btn.textContent=b.label;btn.onclick=b.fn;bd.appendChild(btn);});document.getElementById('g1-msg-overlay').classList.add('show');}
+function g1CloseMsg(){document.getElementById('g1-msg-overlay').classList.remove('show');}
+
+// ==============================================
+//  GAME 2
+// ==============================================
+var G2_SHOP_ITEMS = [
+  {id:'potion',name:'Potion',icon:'\u{1F9EA}',cost:25,desc:'Recover 10 HP',type:'heal',val:10},
+  {id:'potion_ult',name:'Potion Ultimate',icon:'\u2728',cost:55,desc:'Recover 35 HP',type:'heal',val:35},
+  {id:'pancake',name:'Pancake',icon:'\u{1F95E}',cost:50,desc:'Recover 15 HP',type:'heal',val:15},
+  {id:'steel_sword',name:'Steel Sword',icon:'\u{1F5E1}\uFE0F',cost:60,desc:'+3 Attack',type:'stat',stat:'atk',val:3},
+  {id:'magic_book',name:'Magic Book',icon:'\u{1F4D8}',cost:75,desc:'+2 MP (max)',type:'mp',val:2},
+  {id:'magic_book2',name:'Magic Book 2',icon:'\u{1F4D7}',cost:150,desc:'+5 MP (max)',type:'mp',val:5},
+  {id:'enchanted_sword',name:'Enchanted Sword',icon:'\u2694\uFE0F',cost:230,desc:'+7 Attack',type:'stat',stat:'atk',val:7},
+  {id:'dragon_armor',name:'Dragon Armor',icon:'\u{1F409}',cost:290,desc:'+10 Defense',type:'stat',stat:'def',val:10},
+  {id:'magic_book_ult',name:'Magic Book Ultimate',icon:'\u{1F4D5}',cost:360,desc:'+15 MP (max)',type:'mp',val:15},
+  {id:'enchanted_armor',name:'Enchanted Armor',icon:'\u{1F6E1}\uFE0F',cost:430,desc:'+15 Defense',type:'stat',stat:'def',val:15},
+  {id:'bomb',name:'Bomb',icon:'\u{1F4A3}',cost:80,desc:'+4 Attack (one-time use)',type:'bomb',val:4},
+];
+var G2_REGIONS = [
+  {id:'forest',name:'Forest Region',icon:'\u{1F332}',cls:'forest',
+   enemies:[
+     {name:'Rose',icon:'\u{1F339}',hp:14,xp:20,gold:[4,9],atk:4},
+     {name:'Forest Dragon',icon:'\u{1F409}',hp:24,xp:20,gold:[6,12],atk:6},
+     {name:'Tree Imp',icon:'\u{1F33F}',hp:12,xp:20,gold:[3,8],atk:3},
+     {name:'Grass Knight',icon:'\u{1F6E1}\uFE0F',hp:22,xp:20,gold:[5,11],atk:5},
+     {name:'Wild Grass Dog',icon:'\u{1F415}',hp:18,xp:20,gold:[4,10],atk:5},
+     {name:'Forest Skeleton',icon:'\u{1F480}',hp:16,xp:20,gold:[4,9],atk:4},
+   ],
+   boss:{name:'Forest Demon',icon:'\u{1F479}',hp:36,xp:45,gold:[25,40],atk:9},
+   heart:{id:'forest_heart',name:"Forest Demon's Heart",icon:'\u2764\uFE0F\u200D\u{1F525}'},
+   bossDefeated:false},
+  {id:'mountain',name:'Mountain Region',icon:'\u26F0\uFE0F',cls:'mountain',
+   enemies:[
+     {name:'Mountain Lion',icon:'\u{1F981}',hp:38,xp:20,gold:[8,15],atk:8},
+     {name:'Sky Dragon',icon:'\u{1F432}',hp:48,xp:20,gold:[10,18],atk:10},
+     {name:'Cloud',icon:'\u2601\uFE0F',hp:32,xp:20,gold:[7,13],atk:6},
+     {name:'Sky Computer',icon:'\u{1F4BB}',hp:44,xp:20,gold:[9,16],atk:9},
+     {name:'Sky Slime',icon:'\u{1F7E6}',hp:34,xp:20,gold:[7,14],atk:7},
+     {name:'Cushion Cloud',icon:'\u{1F6CF}\uFE0F',hp:30,xp:20,gold:[6,12],atk:6},
+   ],
+   boss:{name:'Mountain Demon',icon:'\u{1F479}',hp:50,xp:50,gold:[40,60],atk:12},
+   heart:{id:'mountain_heart',name:"Mountain Demon's Heart",icon:'\u{1F499}'},
+   bossDefeated:false},
+  {id:'lava',name:'Lava Region',icon:'\u{1F30B}',cls:'lava',
+   enemies:[
+     {name:'Over Heated Knight',icon:'\u{1F6E1}\uFE0F',hp:64,xp:20,gold:[14,24],atk:13},
+     {name:'Flare Dragon',icon:'\u{1F409}',hp:70,xp:20,gold:[16,28],atk:15},
+     {name:'Burned Cookie',icon:'\u{1F36A}',hp:58,xp:20,gold:[12,20],atk:11},
+     {name:'Lava Beam',icon:'\u2604\uFE0F',hp:66,xp:20,gold:[15,25],atk:14},
+     {name:'Lava Pool',icon:'\u{1F7E7}',hp:60,xp:20,gold:[13,22],atk:12},
+     {name:'Fire Paper',icon:'\u{1F4C4}',hp:56,xp:20,gold:[11,19],atk:10},
+   ],
+   boss:{name:'Lava Demon',icon:'\u{1F479}',hp:60,xp:55,gold:[60,90],atk:16},
+   heart:{id:'lava_heart',name:"Lava Demon's Heart",icon:'\u2764\uFE0F\u200D\u{1F525}'},
+   bossDefeated:false},
+  {id:'snow',name:'Frost Region',icon:'\u2744\uFE0F',cls:'snow',
+   enemies:[
+     {name:'Water Dog',icon:'\u{1F415}',hp:80,xp:20,gold:[18,28],atk:16},
+     {name:'Frozen Titan',icon:'\u{1F9CA}',hp:89,xp:20,gold:[22,34],atk:19},
+     {name:'Titan',icon:'\u{1F5FF}',hp:86,xp:20,gold:[21,32],atk:18},
+     {name:'Cold Fish',icon:'\u{1F41F}',hp:78,xp:20,gold:[17,26],atk:15},
+     {name:'Frost Knight',icon:'\u{1F6E1}\uFE0F',hp:84,xp:20,gold:[20,30],atk:17},
+     {name:'Water Bird',icon:'\u{1F426}',hp:76,xp:20,gold:[16,25],atk:14},
+   ],
+   boss:{name:'Frost Demon',icon:'\u{1F479}',hp:92,xp:70,gold:[90,140],atk:19},
+   heart:{id:'frost_heart',name:"Frost Demon's Heart",icon:'\u{1F499}'},
+   bossDefeated:false},
+  {id:'shadow',name:'Shadow Region',icon:'\u{1F311}',cls:'shadow',
+   enemies:[
+     {name:'Shadow Golem',icon:'\u{1F5FF}',hp:110,xp:20,gold:[24,36],atk:22},
+     {name:'Shadow Knight',icon:'\u{1F6E1}\uFE0F',hp:118,xp:20,gold:[26,38],atk:24},
+     {name:'Dark Knight',icon:'\u2694\uFE0F',hp:122,xp:20,gold:[27,40],atk:25},
+     {name:'Shadow Cushion',icon:'\u{1F6CF}\uFE0F',hp:100,xp:20,gold:[22,33],atk:20},
+     {name:'Dark Cookie',icon:'\u{1F36A}',hp:104,xp:20,gold:[23,34],atk:21},
+     {name:'Dark Titan',icon:'\u{1F5FF}',hp:126,xp:20,gold:[28,42],atk:26},
+     {name:'Shadow Slime',icon:'\u{1F7E3}',hp:108,xp:20,gold:[24,35],atk:22},
+   ],
+   boss:{name:'Shadow Demon',icon:'\u{1F479}',hp:285,xp:120,gold:[180,260],atk:28,isFinal:true},
+   heart:{id:'shadow_heart',name:"Shadow Demon's Heart",icon:'\u{1F5A4}'},
+   bossDefeated:false},
+];
+var G2_HEART_POWERS = {
+  forest_heart:{name:'Wild Growth',icon:'\u{1F33F}',desc:'Fully restores HP and MP.'},
+  mountain_heart:{name:'Rockslide',icon:'\u{1FAA8}',desc:'Crushes the enemy for heavy damage.'},
+  lava_heart:{name:'Inferno Blast',icon:'\u{1F525}',desc:'Massive flame damage.'},
+  frost_heart:{name:'Absolute Zero',icon:'\u2744\uFE0F',desc:'Heavy damage + enemy frozen.'},
+  shadow_heart:{name:'Shadow Drain',icon:'\u{1F311}',desc:'Drains enemy for damage, heals you.'},
+};
+var G2_ACT_LINES = {
+  'Rose':'The Rose sways gently. It bloomed here and never meant any harm.',
+  'Forest Dragon':'The Forest Dragon huffs leafy smoke. It mostly wants a nap.',
+  'Tree Imp':'The Tree Imp hides behind a leaf. It was just playing a prank!',
+  'Grass Knight':'The Grass Knight lowers its blade. Honor matters more than this fight.',
+  'Wild Grass Dog':'The Wild Grass Dog wags its leafy tail. It just wanted to play fetch.',
+  'Forest Skeleton':'The Forest Skeleton rattles its bones. It seems lost and confused.',
+  'Forest Demon':'The Forest Demon pauses mid-roar. Even demons get tired of guarding the same trees.',
+  'Mountain Lion':'The Mountain Lion growls softly. It is only protecting its territory.',
+  'Sky Dragon':'The Sky Dragon circles lazily. It just wanted to show off its loop-de-loops.',
+  'Cloud':'The Cloud puffs up sadly. It drifted here by accident on the wind.',
+  'Sky Computer':'The Sky Computer beeps thoughtfully. Error 404: will to fight not found.',
+  'Sky Slime':'The Sky Slime jiggles nervously. It just wants to float in peace.',
+  'Cushion Cloud':'The Cushion Cloud puffs up. It would rather be a pillow.',
+  'Mountain Demon':'The Mountain Demon lowers its fists. Even it is tired of the cold up here.',
+  'Over Heated Knight':'The Over Heated Knight wipes its brow. Fighting in this heat is exhausting.',
+  'Flare Dragon':'The Flare Dragon flickers. Maybe it just needs a break.',
+  'Burned Cookie':'The Burned Cookie crumbles a little. It just wanted to be a snack.',
+  'Lava Beam':'The Lava Beam dims for a moment. Even light needs to rest.',
+  'Lava Pool':'The Lava Pool bubbles quietly. It is just simmering, not angry.',
+  'Fire Paper':'The Fire Paper flutters and curls. It is just a little spark.',
+  'Lava Demon':'The Lava Demon\'s flames dim. Deep down, even it gets cold sometimes.',
+  'Water Dog':'The Water Dog shakes off and whimpers. It just wanted to splash around.',
+  'Frozen Titan':'The Frozen Titan creaks. A single icicle tear forms on its cheek.',
+  'Titan':'The Titan pauses. It looks tired of standing guard for so long.',
+  'Cold Fish':'The Cold Fish blinks slowly. It is just drifting along.',
+  'Frost Knight':'The Frost Knight\'s visor cracks with a small smile. Maybe peace is nice.',
+  'Water Bird':'The Water Bird chirps softly. It just wanted to fly somewhere warmer.',
+  'Frost Demon':'The Frost Demon\'s glare flickers. For a moment the ice in its eyes melts.',
+  'Shadow Golem':'The Shadow Golem groans. It has guarded this place too long.',
+  'Shadow Knight':'The Shadow Knight lowers its blade. Even shadows get tired of fighting.',
+  'Dark Knight':'The Dark Knight\'s helm dips. It remembers a time before the darkness.',
+  'Shadow Cushion':'The Shadow Cushion deflates. It really would rather just be sat on.',
+  'Dark Cookie':'The Dark Cookie crumbles. It just wanted to be enjoyed, not feared.',
+  'Dark Titan':'The Dark Titan kneels. Even titans get lonely in the dark.',
+  'Shadow Slime':'The Shadow Slime ripples nervously. It just wants to ooze back in peace.',
+  'Shadow Demon':'The Shadow Demon blinks all its eyes, one by one. The darkness feels almost still.',
+};
+var G2_BOSS_LAST_WORDS = {
+  'Forest Demon':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! I WAS SUPPOSED TO BE THE STRONGEST DEMON OF THE FOREST!',
+  'Mountain Demon':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! THE PEAKS WERE SUPPOSED TO BE MINE FOREVER!',
+  'Lava Demon':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! MY FLAMES WERE SUPPOSED TO BE UNSTOPPABLE!',
+  'Frost Demon':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! THE FROST WAS SUPPOSED TO LAST FOREVER!',
+  'Shadow Demon':'NOOOOOOOO! HOW COULD YOU HAVE BEAT ME! THE SHADOWS WERE SUPPOSED TO SWALLOW EVERYTHING!',
+};
+
+var g2Player, g2Battle, g2Regions, g2CurrentView, g2Bestiary;
+
+function g2Reset() {
+  g2Player={name:'Hero',level:1,xp:0,hp:30,maxHp:30,mp:20,maxMp:20,atk:5,mag:5,pwr:5,def:5,gold:10,
+    inventory:[{id:'potion',name:'Potion',icon:'\u{1F9EA}',qty:3,type:'heal',val:10}],
+    regionsUnlocked:['forest']};
+  g2Battle=null; g2Regions=JSON.parse(JSON.stringify(G2_REGIONS)); g2CurrentView='world'; g2Bestiary={};
+}
+
+function g2StartGame(){
+  var name=document.getElementById('g2-name-input').value.trim()||'Hero';
+  g2Player.name=name;
+  document.getElementById('g2-title').style.display='none';
+  document.getElementById('g2-game').style.display='block';
+  g2UpdateHeader();g2ShowView('world');
+}
+
+function g2UpdateHeader(){
+  var p=g2Player;
+  document.getElementById('g2-hdr-name').textContent=p.name;
+  document.getElementById('g2-hdr-level').textContent=p.level;
+  document.getElementById('g2-hdr-atk').textContent=p.atk;
+  document.getElementById('g2-hdr-mag').textContent=p.mag;
+  document.getElementById('g2-hdr-pwr').textContent=p.pwr;
+  document.getElementById('g2-hdr-def').textContent=p.def;
+  document.getElementById('g2-hp-val').textContent=p.hp;
+  document.getElementById('g2-hp-max').textContent=p.maxHp;
+  document.getElementById('g2-mp-val').textContent=p.mp;
+  document.getElementById('g2-mp-max').textContent=p.maxMp;
+  document.getElementById('g2-gold').textContent=p.gold;
+  document.getElementById('g2-hp-bar').style.width=Math.max(0,p.hp/p.maxHp*100)+'%';
+  document.getElementById('g2-mp-bar').style.width=Math.max(0,p.mp/p.maxMp*100)+'%';
+  var nxt=LEVELS.find(function(l){return l.lvl===p.level+1;});
+  if(nxt){var cur=LEVELS.find(function(l){return l.lvl===p.level;});document.getElementById('g2-xp-bar').style.width=Math.min(100,(p.xp-cur.xp)/(nxt.xp-cur.xp)*100)+'%';document.getElementById('g2-xp-text').textContent=p.xp+'/'+nxt.xp;}
+  else{document.getElementById('g2-xp-bar').style.width='100%';document.getElementById('g2-xp-text').textContent='MAX';}
+}
+
+function g2ShowView(v){
+  g2CurrentView=v;
+  ['world','inv'].forEach(function(x){var el=document.getElementById('g2-nav-'+x);if(el)el.classList.toggle('active',x===v);});
+  var area=document.getElementById('g2-main-area');
+  if(v==='world')g2RenderWorld(area);else if(v==='inv')g2RenderInventory(area);
+}
+
+function g2RenderWorld(area){
+  var allBeaten=g2Regions.every(function(r){return r.bossDefeated;});
+  var banner=allBeaten?'<div style="background:linear-gradient(135deg,#2a1a00,#5a3a00);border:2px solid #f5c542;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px;color:#f5c542;font-size:11px;font-weight:700;">\u{1F3C6} Celebrate! All 5 demons have fallen.</div>':'';
+  area.innerHTML=banner+'<div class="g-area-title">\u{1F5FA}\uFE0F WHERE TO GO?</div><div style="margin-bottom:12px;"><div class="g-region-grid" id="g2-region-grid"></div></div><hr class="g-divider"><div class="g-town-grid" style="grid-template-columns:1fr;"><div class="g-town-btn" onclick="g2ShowShop()"><span class="ti">\u{1F3EA}</span><div class="tn">ITEM STORE</div></div></div>';
+  var grid=document.getElementById('g2-region-grid');
+  g2Regions.forEach(function(r,i){
+    var unlocked=g2Player.regionsUnlocked.includes(r.id);
+    var div=document.createElement('div');
+    div.className='g-region-btn gr-'+r.id+(unlocked?'':' locked');
+    div.innerHTML='<span class="ri">'+r.icon+'</span><div class="rn">'+r.name+'</div><div class="rr">'+(unlocked?(r.bossDefeated?'\u2705 Cleared':'Enter'):'\u{1F512} Locked')+'</div>';
+    if(unlocked)div.onclick=function(){g2ShowRegion(i);};
+    grid.appendChild(div);
+  });
+}
+
+function g2ShowRegion(idx){
+  var r=g2Regions[idx],area=document.getElementById('g2-main-area');
+  var bossBtn=r.bossDefeated?'<div style="padding:14px;border-radius:10px;border:2px solid var(--border);background:#1e1430;font-size:11px;color:#555;text-align:center;">'+r.heart.icon+' '+r.heart.name+' claimed.</div>':'<button class="g-btn g-btn-full" style="background:linear-gradient(135deg,#7a2200,#c0390b);color:white;padding:14px;border:2px solid #ff6b2b;border-radius:10px;font-size:9px;cursor:pointer;font-family:\'Press Start 2P\',monospace;" onclick="g2StartBattle('+idx+',true)">\u{1F451} Challenge Boss</button>';
+  area.innerHTML='<span class="g-back-link" onclick="g2ShowView(\'world\')">\u2190 Back to World</span><div class="g-region-header '+r.cls+'"><div class="rhi">'+r.icon+'</div><div class="rhn">'+r.name.toUpperCase()+'</div></div><div style="display:flex;flex-direction:column;gap:10px;"><button class="g-btn g-btn-gold g-btn-full" onclick="g2StartBattle('+idx+',false)">\u2694\uFE0F Fight Enemy</button>'+bossBtn+'</div>';
+}
+
+function g2ShowShop(){
+  var area=document.getElementById('g2-main-area');
+  var html='<span class="g-back-link" onclick="g2ShowView(\'world\')">\u2190 Back to World</span><div class="g-area-title">\u{1F3EA} ITEM STORE</div><div>';
+  G2_SHOP_ITEMS.forEach(function(item){
+    var isPotion=(item.id==='potion'||item.id==='potion_ult');
+    var mainBtn=isPotion?'<button class="g-btn g-btn-gold g-btn-sm" onclick="g2BuyItem(\''+item.id+'\',5)">BUY x5</button>':'<button class="g-btn g-btn-gold g-btn-sm" onclick="g2BuyItem(\''+item.id+'\',1)">BUY</button>';
+    html+='<div class="g-shop-item"><div><div class="in">'+item.icon+' '+item.name+'</div><div class="id">'+item.desc+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="ip">'+item.cost+'g'+(isPotion?' (x5='+(item.cost*5)+'g)':'')+'</div>'+mainBtn+'</div></div>';
+  });
+  html+='</div>';area.innerHTML=html;
+}
+function g2BuyItem(id,qty){
+  qty=qty||1;var item=G2_SHOP_ITEMS.find(function(i){return i.id===id;});if(!item)return;
+  var total=item.cost*qty;if(g2Player.gold<total){g2ShowMsg('Not Enough Gold!','You need '+total+'g.',[{label:'OK',fn:function(){g2CloseMsg();}}]);return;}
+  SFX.shop();g2Player.gold-=total;
+  if(item.type==='stat'){g2Player[item.stat]+=item.val;g2ShowMsg('Purchased!',item.icon+' '+item.name+' equipped! '+item.stat.toUpperCase()+' +'+item.val,[{label:'OK',fn:function(){g2CloseMsg();}}]);}
+  else if(item.type==='mp'){g2Player.maxMp+=item.val;g2Player.mp+=item.val;g2ShowMsg('Purchased!',item.icon+' '+item.name+' studied! Max MP +'+item.val,[{label:'OK',fn:function(){g2CloseMsg();}}]);}
+  else{g2AddToInventory(item,qty);g2ShowMsg('Purchased!',(qty>1?qty+'x ':'')+item.icon+' '+item.name+' added to your bag!',[{label:'OK',fn:function(){g2CloseMsg();}}]);}
+  g2UpdateHeader();
+}
+function g2AddToInventory(item,qty){qty=qty||1;var e=g2Player.inventory.find(function(i){return i.id===item.id;});if(e)e.qty+=qty;else g2Player.inventory.push({id:item.id,name:item.name,icon:item.icon,qty:qty,type:item.type,val:item.val||0});}
+
+function g2RenderInventory(area){
+  area.innerHTML='<div class="g-area-title">\u{1F9F3} YOUR BAG</div>';
+  if(!g2Player.inventory.length){area.innerHTML+='<p style="text-align:center;color:#9a88bb;margin-top:20px;">Your bag is empty.</p>';return;}
+  var html='<div class="g-scroll-inner">';
+  g2Player.inventory.forEach(function(item){
+    var actionHtml='';
+    if(item.type==='heal'){actionHtml='<button class="g-btn g-btn-gold g-btn-sm" onclick="g2UseItem(\''+item.id+'\')">USE</button>';}
+    else if(item.type==='bomb'){actionHtml='<span style="font-size:10px;color:#9a88bb;">Battle only</span>';}
+    else if(item.type==='trophy'){var p=G2_HEART_POWERS[item.id];actionHtml=p?'<span style="font-size:10px;color:#f5c542;text-align:right;">'+p.icon+' '+p.name+'<br>(use in battle)</span>':'<span style="font-size:10px;color:#f5c542;">Trophy</span>';}
+    html+='<div class="g-inv-item"><div><span style="font-size:20px;">'+item.icon+'</span> <span style="font-weight:700;">'+item.name+'</span> <span style="font-size:11px;color:#9a88bb;">x'+item.qty+'</span></div>'+actionHtml+'</div>';
+  });
+  html+='</div>';area.innerHTML+=html;
+}
+function g2UseItem(id){
+  var item=g2Player.inventory.find(function(i){return i.id===id;});if(!item||item.type!=='heal')return;
+  var before=g2Player.hp;g2Player.hp=Math.min(g2Player.maxHp,g2Player.hp+item.val);var gained=g2Player.hp-before;
+  item.qty--;if(item.qty<=0)g2Player.inventory=g2Player.inventory.filter(function(i){return i.id!==id;});
+  SFX.heal();g2UpdateHeader();g2ShowMsg('Item Used!',item.icon+' '+item.name+' restored '+gained+' HP!',[{label:'OK',fn:function(){g2CloseMsg();g2RenderInventory(document.getElementById('g2-main-area'));}}]);
+}
+
+function g2StartBattle(idx,isBoss){
+  var r=g2Regions[idx],enemy;
+  if(isBoss){enemy=JSON.parse(JSON.stringify(r.boss));enemy.isBoss=true;}
+  else{enemy=JSON.parse(JSON.stringify(r.enemies[Math.floor(Math.random()*r.enemies.length)]));enemy.isBoss=false;}
+  enemy.maxHp=enemy.hp;enemy.regionIdx=idx;
+  g2Battle={enemy:enemy,log:[],active:true,acted:false,defendCount:0,usedHearts:{}};g2RenderBattle();
+}
+
+function g2RenderBestiaryStrip(){
+  var names=Object.keys(g2Bestiary);if(!names.length)return'';
+  var html='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">';
+  names.forEach(function(n){var b=g2Bestiary[n];html+='<div style="background:#1e1430;border:1px solid #5a3e8a;border-radius:6px;padding:4px 8px;font-size:11px;display:flex;align-items:center;gap:4px;"><span style="font-size:14px;">'+b.icon+'</span><span>'+n+'</span><span style="color:#f5c542;font-weight:700;">x'+b.count+'</span></div>';});
+  return html+'</div>';
+}
+
+function g2RenderBattle(){
+  var area=document.getElementById('g2-main-area'),e=g2Battle.enemy,hpPct=Math.max(0,e.hp/e.maxHp*100);
+  var logHtml=g2Battle.log.slice(-4).map(function(l){return'<div class="g-log-line g-'+l.cls+'">'+l.text+'</div>';}).join('');
+  var canMagic=g2Player.mp>=5,hasItem=g2Player.inventory.some(function(i){return (i.type==='heal'||i.type==='bomb')&&i.qty>0;}),hasHeart=g2Player.inventory.some(function(i){return i.type==='trophy'&&G2_HEART_POWERS[i.id];});
+  area.innerHTML='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.icon+'</span><div class="g-enemy-name">'+e.name+(e.isBoss?' \u{1F451}':'')+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+e.hp+'/'+e.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+hpPct+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div></div><div style="background:#1e1430;border:1px solid #5a3e8a;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div><div class="g-bar-label" style="margin-bottom:4px;"><span>\u2764\uFE0F '+g2Player.name+'</span><span style="font-weight:700;color:'+(g2Player.hp<=g2Player.maxHp*0.25?'#e74c3c':'#f0e8ff')+';">'+g2Player.hp+' / '+g2Player.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,g2Player.hp/g2Player.maxHp*100)+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div><div><div class="g-bar-label" style="margin-bottom:4px;"><span>\u{1F499} MP</span><span style="font-weight:700;">'+g2Player.mp+' / '+g2Player.maxMp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,g2Player.mp/g2Player.maxMp*100)+'%;background:linear-gradient(90deg,#1a5799,#3498db);"></div></div></div></div><div style="font-size:9px;color:#9a88bb;font-family:\'Press Start 2P\',monospace;margin-bottom:6px;">\u{1F4D6} BESTIARY</div>'+g2RenderBestiaryStrip()+'<div class="g-battle-log">'+(logHtml||'<span style="color:#9a88bb">A wild '+e.name+' appears!</span>')+'</div><div class="g-action-grid"><button class="g-action-btn" onclick="g2BattleAction(\'attack\')"><span class="ai">\u2694\uFE0F</span>ATTACK</button><button class="g-action-btn" onclick="g2BattleAction(\'magic\')" '+(canMagic?'':'disabled')+'><span class="ai">\u2728</span>MAGIC'+(canMagic?'':' (no MP)')+'</button><button class="g-action-btn" onclick="g2BattleAction(\'defend\')" '+(g2Battle.defendCount>=10?'disabled':'')+'><span class="ai">\u{1F6E1}\uFE0F</span>DEFEND</button><button class="g-action-btn" onclick="g2BattleAction(\'item\')" '+(hasItem?'':'disabled')+'><span class="ai">\u{1F9F3}</span>ITEM</button><button class="g-action-btn" onclick="g2BattleAction(\'act\')" style="border-color:#a78bfa;color:#a78bfa;"><span class="ai">\u{1F4AC}</span>ACT</button><button class="g-action-btn" onclick="g2BattleAction(\'spare\')" '+(g2Battle.acted?'style="border-color:#4ade80;color:#4ade80;"':'disabled')+'><span class="ai">\u{1F54A}\uFE0F</span>SPARE</button><button class="g-action-btn" onclick="g2BattleAction(\'heart\')" '+(hasHeart?'style="border-color:#ff4d6d;color:#ff4d6d;"':'disabled')+'><span class="ai">\u{1F496}</span>HEART'+(hasHeart?'':' (none)')+'</button></div>';
+}
+
+function g2ShowItemPicker(){
+  var items=g2Player.inventory.filter(function(i){return (i.type==='heal'||i.type==='bomb')&&i.qty>0;}),e=g2Battle.enemy,hpPct=Math.max(0,e.hp/e.maxHp*100),area=document.getElementById('g2-main-area');
+  var html='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.icon+'</span><div class="g-enemy-name">'+e.name+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+e.hp+'/'+e.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+hpPct+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div></div><div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#f5c542;text-align:center;margin-bottom:12px;">\u{1F9F3} CHOOSE AN ITEM</div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">';
+  items.forEach(function(item){var desc=item.type==='bomb'?('Deals '+item.val+' bonus damage'):('Recover '+item.val+' HP');html+='<div class="g-shop-item"><div><div class="in">'+item.icon+' '+item.name+' <span style="color:#9a88bb;font-size:11px;">x'+item.qty+'</span></div><div class="id">'+desc+'</div></div><button class="g-btn g-btn-gold g-btn-sm" onclick="g2UseItemInBattle(\''+item.id+'\')">USE</button></div>';});
+  html+='</div><button class="g-btn g-btn-outline g-btn-full" onclick="g2RenderBattle()">\u2190 Back</button>';area.innerHTML=html;
+}
+function g2UseItemInBattle(id){
+  var item=g2Player.inventory.find(function(i){return i.id===id;}),e=g2Battle.enemy;if(!item||item.qty<=0)return;
+  if(item.type==='heal'){var before=g2Player.hp;g2Player.hp=Math.min(g2Player.maxHp,g2Player.hp+item.val);var gained=g2Player.hp-before;item.qty--;if(item.qty<=0)g2Player.inventory=g2Player.inventory.filter(function(i){return i.id!==id;});g2Battle.log.push({text:item.icon+' Used '+item.name+', recovered '+gained+' HP!',cls:'log-good'});g2Battle.log.push({text:'\u{1F635} '+e.name+' is confused and misses turn!',cls:'log-good'});SFX.heal();g2UpdateHeader();g2RenderBattle();return;}
+  if(item.type==='bomb'){var dmg=Math.max(1,g2Player.atk+item.val+Math.floor(Math.random()*4));e.hp-=dmg;item.qty--;if(item.qty<=0)g2Player.inventory=g2Player.inventory.filter(function(i){return i.id!==id;});g2Battle.log.push({text:item.icon+' '+item.name+' thrown! '+e.name+' takes '+dmg+' damage!',cls:'log-player'});SFX.attack();if(e.hp<=0){e.hp=0;g2Battle.active=false;g2OnEnemyDefeated();return;}setTimeout(function(){if(!g2Battle||!g2Battle.active)return;var rd=Math.max(1,e.atk-Math.floor(g2Player.def/2)+Math.floor(Math.random()*4));g2Player.hp-=rd;if(g2Player.hp<0)g2Player.hp=0;g2Battle.log.push({text:e.name+' attacks for '+rd+' damage!',cls:'log-enemy'});SFX.hit();g2UpdateHeader();if(g2Player.hp<=0){g2Battle.active=false;g2OnPlayerDefeated();return;}g2RenderBattle();},300);g2RenderBattle();}
+}
+
+function g2ShowHeartPicker(){
+  var hearts=g2Player.inventory.filter(function(i){return i.type==='trophy'&&G2_HEART_POWERS[i.id];}),e=g2Battle.enemy,hpPct=Math.max(0,e.hp/e.maxHp*100),area=document.getElementById('g2-main-area');
+  var html='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.icon+'</span><div class="g-enemy-name">'+e.name+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+e.hp+'/'+e.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+hpPct+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div></div></div><div style="font-family:\'Press Start 2P\',monospace;font-size:9px;color:#ff4d6d;text-align:center;margin-bottom:12px;">\u{1F496} CHOOSE A HEART POWER</div><div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">';
+  hearts.forEach(function(item){var p=G2_HEART_POWERS[item.id];html+='<div class="g-shop-item"><div><div class="in">'+item.icon+' '+p.icon+' '+p.name+'</div><div class="id">'+p.desc+'</div></div><button class="g-btn g-btn-gold g-btn-sm" onclick="g2UseHeartInBattle(\''+item.id+'\')">USE</button></div>';});
+  html+='</div><button class="g-btn g-btn-outline g-btn-full" onclick="g2RenderBattle()">\u2190 Back</button>';area.innerHTML=html;
+}
+function g2UseHeartInBattle(id){
+  var item=g2Player.inventory.find(function(i){return i.id===id;}),power=G2_HEART_POWERS[id],e=g2Battle.enemy;if(!item||!power)return;
+  if(id==='forest_heart'){g2Player.hp=g2Player.maxHp;g2Player.mp=g2Player.maxMp;g2Battle.log.push({text:item.icon+' '+power.icon+' '+power.name+'! HP and MP fully restored!',cls:'log-good'});SFX.heal();g2UpdateHeader();g2RenderBattle();return;}
+  var dmg=0,freeze=false;
+  if(id==='mountain_heart'){dmg=g2Player.atk*2+20+Math.floor(Math.random()*6);}
+  else if(id==='lava_heart'){dmg=g2Player.mag*2+30+Math.floor(Math.random()*8);}
+  else if(id==='frost_heart'){dmg=g2Player.atk+g2Player.mag+15+Math.floor(Math.random()*6);freeze=true;}
+  else if(id==='shadow_heart'){dmg=g2Player.atk*2+g2Player.mag*2+35+Math.floor(Math.random()*10);}
+  e.hp-=dmg;g2Battle.log.push({text:item.icon+' '+power.icon+' '+power.name+'! '+e.name+' takes '+dmg+' damage!',cls:'log-player'});SFX.magic();
+  if(id==='shadow_heart'){var ha=Math.floor(dmg/2);var bef=g2Player.hp;g2Player.hp=Math.min(g2Player.maxHp,g2Player.hp+ha);var gd=g2Player.hp-bef;g2Battle.log.push({text:'\u{1F311} '+g2Player.name+' drains '+gd+' HP!',cls:'log-good'});}
+  if(freeze)g2Battle.log.push({text:'\u{1F976} '+e.name+' is frozen and misses turn!',cls:'log-good'});
+  if(e.hp<=0){e.hp=0;g2Battle.active=false;g2OnEnemyDefeated();return;}
+  if(freeze){g2UpdateHeader();g2RenderBattle();return;}
+  setTimeout(function(){if(!g2Battle||!g2Battle.active)return;var rd=Math.max(1,e.atk-Math.floor(g2Player.def/2)+Math.floor(Math.random()*4));g2Player.hp-=rd;if(g2Player.hp<0)g2Player.hp=0;g2Battle.log.push({text:e.name+' attacks for '+rd+' damage!',cls:'log-enemy'});SFX.hit();g2UpdateHeader();if(g2Player.hp<=0){g2Battle.active=false;g2OnPlayerDefeated();return;}g2RenderBattle();},300);g2RenderBattle();
+}
+
+function g2BattleAction(action){
+  if(!g2Battle||!g2Battle.active)return;
+  var e=g2Battle.enemy,defending=false;
+  if(action==='attack'){SFX.attack();var dmg=Math.max(1,g2Player.atk+Math.floor(Math.random()*4));e.hp-=dmg;g2Battle.log.push({text:g2Player.name+' attacks for '+dmg+' damage!',cls:'log-player'});}
+  else if(action==='magic'){if(g2Player.mp<5)return;SFX.magic();g2Player.mp-=5;var dmg2=Math.max(1,g2Player.mag*2+Math.floor(Math.random()*6));e.hp-=dmg2;g2Battle.log.push({text:'\u2728 Magic blast hits for '+dmg2+' damage!',cls:'log-player'});g2UpdateHeader();}
+  else if(action==='defend'){if(g2Battle.defendCount>=10)return;defending=true;g2Battle.defendCount++;g2Battle.log.push({text:g2Player.name+' takes a defensive stance! ('+(10-g2Battle.defendCount)+' defends left)',cls:'log-good'});}
+  else if(action==='act'){var msg=G2_ACT_LINES[e.name]||e.name+' looks uncertain.';g2Battle.acted=true;g2Battle.log.push({text:'\u{1F4AC} '+msg,cls:'log-good'});g2Battle.log.push({text:'\u{1F300} '+e.name+' is touched and misses turn!',cls:'log-good'});g2RenderBattle();return;}
+  else if(action==='spare'){
+    if(!g2Battle.acted)return;
+    if(e.isBoss){g2Battle.log.push({text:e.name+' is ENRAGED! One-hit KO!',cls:'log-enemy'});g2Player.hp=0;g2UpdateHeader();g2Battle.active=false;g2OnPlayerDefeated();return;}
+    SFX.spare();g2Battle.active=false;
+    g2ShowMsg('Spared! \u{1F54A}\uFE0F',e.name+' was spared and fled!',[
+      {label:'\u2694\uFE0F Fight Enemy',fn:function(){g2CloseMsg();g2StartBattle(e.regionIdx,false);}},
+      {label:'\u{1F451} Fight Boss',fn:function(){g2CloseMsg();g2StartBattle(e.regionIdx,true);}},
+      {label:'\u{1F5FA}\uFE0F World Map',fn:function(){g2CloseMsg();g2ShowView('world');}}
+    ]);return;
+  }
+  else if(action==='item'){g2ShowItemPicker();return;}
+  else if(action==='heart'){g2ShowHeartPicker();return;}
+
+  if(e.hp<=0){e.hp=0;g2Battle.active=false;g2OnEnemyDefeated();return;}
+  setTimeout(function(){
+    if(!g2Battle||!g2Battle.active)return;
+    var rawDmg=Math.max(1,e.atk-Math.floor(g2Player.def/2)+Math.floor(Math.random()*4)),dmg=defending?0:rawDmg;
+    g2Player.hp-=dmg;if(g2Player.hp<0)g2Player.hp=0;
+    if(defending){g2Battle.enemy.hp-=10;if(g2Battle.enemy.hp<0)g2Battle.enemy.hp=0;g2Battle.log.push({text:g2Player.name+' blocks! '+e.name+' takes 10 reflected damage!',cls:'log-good'});g2UpdateHeader();if(g2Battle.enemy.hp<=0){g2Battle.active=false;g2OnEnemyDefeated();return;}}
+    else{SFX.hit();g2Battle.log.push({text:e.name+' attacks for '+dmg+' damage!',cls:'log-enemy'});}
+    g2UpdateHeader();if(g2Player.hp<=0){g2Battle.active=false;g2OnPlayerDefeated();return;}g2RenderBattle();
+  },300);
+  g2RenderBattle();
+}
+
+function g2OnEnemyDefeated(){
+  var e=g2Battle.enemy,r=g2Regions[e.regionIdx];
+  var goldGain=e.gold[0]+Math.floor(Math.random()*(e.gold[1]-e.gold[0]));
+  g2Player.gold+=goldGain;g2Player.xp+=e.xp;
+  if(!g2Bestiary[e.name])g2Bestiary[e.name]={icon:e.icon,count:0};g2Bestiary[e.name].count++;
+  var heartGained=false;
+  if(e.isBoss){r.bossDefeated=true;g2AddToInventory({id:r.heart.id,name:r.heart.name,icon:r.heart.icon,type:'trophy',val:0},1);heartGained=true;}
+  g2UnlockNextRegion(e.regionIdx);
+  var leveledUp=false,newLevel=g2Player.level;
+  while(true){var nxt=LEVELS.find(function(l){return l.lvl===g2Player.level+1;});if(!nxt)break;if(g2Player.xp>=nxt.xp){g2Player.level++;g2Player.maxHp+=20;g2Player.hp=g2Player.maxHp;g2Player.maxMp+=4;g2Player.mp=g2Player.maxMp;g2Player.pwr+=2;leveledUp=true;newLevel=g2Player.level;}else break;}
+  g2UpdateHeader();SFX.victory();
+  var lastWords=e.isBoss?(G2_BOSS_LAST_WORDS[e.name]||''):'';
+  var lw=lastWords?'\n\n"'+lastWords+'"':'';
+  var heartLine=heartGained?'\n\nYou obtained '+r.heart.icon+' '+r.heart.name+'!':'';
+  var msg=e.isBoss?'\u{1F451} '+e.name+' defeated!'+lw+heartLine+'\n\nYou earned '+e.xp+' XP and '+goldGain+'g!':e.name+' defeated!\n\nYou earned '+e.xp+' XP and '+goldGain+'g!';
+  var buttons=[];
+  if(e.isBoss&&r.bossDefeated){buttons.push({label:'Continue',fn:function(){g2CloseMsg();g2ShowView('world');}});}
+  else{buttons.push({label:'Fight Again',fn:function(){g2CloseMsg();g2StartBattle(e.regionIdx,false);}});buttons.push({label:'World Map',fn:function(){g2CloseMsg();g2ShowView('world');}});}
+  if(leveledUp){SFX.levelup();g2ShowMsg('LEVEL UP! \u{1F31F}','\u2B06\uFE0F Level '+newLevel+'!\nHP and MP restored!\n\n'+msg,buttons);}
+  else if(e.isBoss&&e.isFinal){g2ShowMsg('\u{1F3C6} YOU WIN!','The Shadow Demon is defeated!\n'+g2Player.name+' has conquered Realm of Regions 2!',[{label:'Celebrate!',fn:function(){g2CloseMsg();g2ShowView('world');}}]);}
+  else{g2ShowMsg(e.isBoss?'Boss Defeated! \u{1F451}':'Victory! \u2694\uFE0F',msg,buttons);}
+}
+function g2OnPlayerDefeated(){SFX.defeat();g2UpdateHeader();g2ShowMsg('\u{1F480} Defeated...',g2Player.name+' has fallen in battle!',[{label:'To World Map',fn:function(){g2CloseMsg();g2Player.hp=g2Player.maxHp;g2UpdateHeader();g2ShowView('world');}}]);}
+function g2UnlockNextRegion(idx){var r=g2Regions[idx];if(!r.bossDefeated)return;var m={forest:'mountain',mountain:'lava',lava:'snow',snow:'shadow'};var nid=m[r.id];if(nid&&!g2Player.regionsUnlocked.includes(nid))g2Player.regionsUnlocked.push(nid);}
+function g2ShowMsg(title,body,buttons){document.getElementById('g2-msg-title').textContent=title;document.getElementById('g2-msg-body').textContent=body;var bd=document.getElementById('g2-msg-buttons');bd.innerHTML='';buttons.forEach(function(b){var btn=document.createElement('button');btn.className='g-btn g-btn-gold';btn.textContent=b.label;btn.onclick=b.fn;bd.appendChild(btn);});document.getElementById('g2-msg-overlay').classList.add('show');}
+function g2CloseMsg(){document.getElementById('g2-msg-overlay').classList.remove('show');}
+
+// ==============================================
+//  GAME 3
+// ==============================================
+var G3_REGIONS = [
+  {id:'forest',name:'Forest Region',icon:'\u{1F333}',boss:'Forest Titan',knight:'Forest Knight',bossHp:60,knightHp:180},
+  {id:'mountain',name:'Mountain Region',icon:'\u26F0',boss:'Mountain Titan',knight:'Mountain Knight',bossHp:80,knightHp:240},
+  {id:'lava',name:'Lava Region',icon:'\u{1F30B}',boss:'Lava Titan',knight:'Lava Knight',bossHp:100,knightHp:280},
+  {id:'frost',name:'Frost Region',icon:'\u2744',boss:'Frost Titan',knight:'Frost Knight',bossHp:120,knightHp:320},
+  {id:'shadow',name:'Shadow Region',icon:'\u{1F319}',boss:'Shadow Titan',knight:'Shadow Knight',bossHp:140,knightHp:380},
+  {id:'desert',name:'Desert Region',icon:'\u{1F3DC}',boss:'Desert Titan',knight:'Desert Knight',bossHp:600,knightHp:480},
+];
+var G3_ENEMY_POOL = {
+  forest:[{name:'Thornling',sprite:'\u{1F449}',hp:18,atk:4,def:1,gold:8,desc:'A bundle of thorns given dark life.',heartDrop:'Wild Growth'},{name:'Vine Wraith',sprite:'\u{1F33B}',hp:22,atk:5,def:2,gold:10,desc:'Strangling vines with a sinister will.',heartDrop:null},{name:'Bark Demon',sprite:'\u{1F332}',hp:30,atk:6,def:3,gold:14,desc:'Ancient bark twisted by shadow magic.',heartDrop:'Rockslide'}],
+  mountain:[{name:'Stone Imp',sprite:'\u{1F9F1}',hp:26,atk:6,def:3,gold:12,desc:'A rock golem barely knee-high.',heartDrop:null},{name:'Crag Beast',sprite:'\u26F0',hp:35,atk:8,def:4,gold:16,desc:'Hulking creature of living granite.',heartDrop:'Rockslide'},{name:'Echo Specter',sprite:'\u{1F47B}',hp:28,atk:7,def:2,gold:13,desc:'A ghost that lives in mountain echoes.',heartDrop:null}],
+  lava:[{name:'Ember Imp',sprite:'\u{1F525}',hp:30,atk:9,def:2,gold:15,desc:'A tiny demon of living flame.',heartDrop:'Inferno Blast'},{name:'Magma Slug',sprite:'\u{1F40C}',hp:38,atk:7,def:5,gold:18,desc:'Slow, but its touch scorches.',heartDrop:null},{name:'Cinderwing',sprite:'\u{1F985}',hp:32,atk:10,def:3,gold:17,desc:'A bird of living cinders and ash.',heartDrop:'Inferno Blast'}],
+  frost:[{name:'Ice Sprite',sprite:'\u2744',hp:34,atk:9,def:4,gold:18,desc:'A dancing shard of perpetual ice.',heartDrop:'Absolute Zero'},{name:'Frost Wraith',sprite:'\u{1F9CA}',hp:40,atk:11,def:3,gold:20,desc:'A howling spirit of the blizzard.',heartDrop:null},{name:'Glacier Toad',sprite:'\u{1F438}',hp:45,atk:8,def:6,gold:22,desc:'A massive toad encased in living frost.',heartDrop:null}],
+  shadow:[{name:'Shade',sprite:'\u{1F5BC}',hp:38,atk:12,def:4,gold:20,desc:'A living shadow that feeds on light.',heartDrop:'Shadow Drain'},{name:'Void Imp',sprite:'\u{1F319}',hp:42,atk:13,def:3,gold:22,desc:'A creature born from nothing.',heartDrop:null},{name:'Dark Revenant',sprite:'\u{1F9DF}',hp:50,atk:11,def:6,gold:25,desc:'The restless dead consumed by darkness.',heartDrop:'Shadow Drain'}],
+  desert:[{name:'Sand Djinn',sprite:'\u{1F32A}',hp:44,atk:13,def:5,gold:24,desc:'A spirit of swirling sandstorms.',heartDrop:'Desert Dash'},{name:'Scorpion Lord',sprite:'\u{1F982}',hp:52,atk:15,def:7,gold:28,desc:'Ancient scorpion bloated with venom.',heartDrop:'Inferno Blast'},{name:'Dune Specter',sprite:'\u{1F47F}',hp:48,atk:14,def:4,gold:26,desc:'A ghoulish shape that haunts the dunes.',heartDrop:'Shadow Drain'}],
+};
+var G3_HEARTS = [
+  {id:'wild_growth',name:'Wild Growth',icon:'\u{1F33F}',desc:'Fully restores HP and MP.',color:'#27ae60'},
+  {id:'rockslide',name:'Rockslide',icon:'\u{1F9F1}',desc:'Deals 35 damage to foe.',color:'#7f8c8d'},
+  {id:'inferno_blast',name:'Inferno Blast',icon:'\u{1F525}',desc:'Deals 35 damage to foe.',color:'#e74c3c'},
+  {id:'absolute_zero',name:'Absolute Zero',icon:'\u2744',desc:'Freezes foe; skips turn.',color:'#3498db'},
+  {id:'shadow_drain',name:'Shadow Drain',icon:'\u{1F5BC}',desc:'Drains 20 HP from foe.',color:'#8e44ad'},
+  {id:'desert_dash',name:'Desert Dash',icon:'\u{1F3DC}',desc:'Dodge all attacks for 3 turns.',color:'#c9922a'},
+];
+var G3_SPELLS = [
+  {id:'arcane_bolt',name:'Arcane Bolt',icon:'\u26A1',cost:5,dmg:20,desc:'20 magic damage.',special:null,unlockKills:0},
+  {id:'fire_wave',name:'Fire Wave',icon:'\u{1F525}',cost:8,dmg:30,desc:'30 fire damage.',special:null,unlockKills:0},
+  {id:'ice_lance',name:'Ice Lance',icon:'\u2744',cost:8,dmg:28,desc:'28 ice damage.',special:null,unlockKills:0},
+  {id:'thunder',name:'Thunder',icon:'\u26C8',cost:12,dmg:40,desc:'40 lightning damage.',special:null,unlockKills:0},
+  {id:'void_blast',name:'Void Blast',icon:'\u{1F319}',cost:8,dmg:55,desc:'55 void damage.',special:null,unlockKills:0},
+  {id:'quake',name:'Quake',icon:'\u{1F3C4}',cost:10,dmg:45,desc:'45 earth damage.',special:null,unlockKills:10},
+  {id:'blizzard',name:'Blizzard',icon:'\u2744',cost:12,dmg:50,desc:'50 blizzard damage.',special:null,unlockKills:20},
+  {id:'inferno',name:'Inferno',icon:'\u{1F525}',cost:14,dmg:60,desc:'60 inferno damage.',special:null,unlockKills:30},
+  {id:'soul_rend',name:'Soul Rend',icon:'\u{1F480}',cost:15,dmg:65,desc:'65 dark damage.',special:null,unlockKills:40},
+  {id:'storm_call',name:'Storm Call',icon:'\u26C8',cost:16,dmg:70,desc:'70 storm damage.',special:null,unlockKills:50},
+  {id:'gravity',name:'Gravity',icon:'\u2BEB',cost:18,dmg:80,desc:'80 gravity damage.',special:null,unlockKills:60},
+  {id:'time_stop',name:'Time Stop',icon:'\u231B',cost:20,dmg:0,desc:'Enemy skips next 2 turns.',special:'timestop',unlockKills:70},
+  {id:'life_drain',name:'Life Drain',icon:'\u2764',cost:18,dmg:50,desc:'Drain 50 HP from enemy.',special:'drain50',unlockKills:80},
+  {id:'meteor',name:'Meteor',icon:'\u2604',cost:25,dmg:70,desc:'70 meteor damage.',special:null,unlockKills:90},
+  {id:'realm_break',name:'Realm Break',icon:'\u{1F4A5}',cost:30,dmg:95,desc:'95 realm damage.',special:null,unlockKills:100},
+];
+var G3_SHOP_ITEMS = [
+  {id:'tattle_book',name:'Tattle Book',desc:'Required to use Tattle in battle.',cost:0,eff:null,once:true},
+  {id:'mp_h1',name:'Magic Holder I',desc:'MP +3',cost:30,eff:{mp:3},once:true},
+  {id:'mp_h2',name:'Magic Holder II',desc:'MP +5',cost:30,eff:{mp:5},once:true},
+  {id:'mp_h3',name:'Magic Holder III',desc:'MP +10',cost:75,eff:{mp:10},once:true},
+  {id:'mp_h4',name:'Magic Holder IV',desc:'MP +20',cost:150,eff:{mp:20},once:true},
+  {id:'steal_sword',name:'Steal Sword',desc:'Attack +3',cost:30,eff:{atk:3},once:true},
+  {id:'iron_sword',name:'Iron Sword',desc:'Attack +6',cost:60,eff:{atk:6},once:true},
+  {id:'enchanted_sword',name:'Enchanted Sword',desc:'Attack +12',cost:120,eff:{atk:12},once:true},
+];
+var G3_XP_THRESHOLDS = [0,20,40,80,160,320,640,1280,2560,5120,10240];
+
+var g3G, g3Battle, g3PlayerMode, g3CurrentPlayer;
+
+function g3DefaultState(){return{player:{hp:40,maxHp:40,mp:20,maxMp:20,atk:5,def:5,gold:0,xp:0,level:1,totalKills:0},owned:[],hearts:{wild_growth:0,rockslide:0,inferno_blast:0,absolute_zero:0,shadow_drain:0,desert_dash:0},tattled:{},regions:{},cleared:false,p1dead:false,p2dead:false};}
+
+function g3SelectMode(n){
+  g3PlayerMode=n;
+  document.getElementById('g3-mode-1p').className='g-btn g-btn-'+(n===1?'gold':'outline')+' g-btn-sm';
+  document.getElementById('g3-mode-2p').className='g-btn g-btn-'+(n===2?'gold':'outline')+' g-btn-sm';
+}
+
+function g3StartGame(){
+  var name=document.getElementById('g3-name-input').value.trim()||'Hero';
+  g3G=g3DefaultState();g3G.owned.push('tattle_book');
+  document.getElementById('g3-title').style.display='none';
+  document.getElementById('g3-game').style.display='block';
+  g3ShowMap();
+}
+
+function g3XpForNext(){var lvl=g3G.player.level;if(lvl>=11)return null;return G3_XP_THRESHOLDS[lvl];}
+
+function g3UpdateHdr(){
+  var p=g3G.player;
+  document.getElementById('g3-hdr-name').textContent=document.getElementById('g3-name-input').value.trim()||'Hero';
+  document.getElementById('g3-hdr-level').textContent=p.level||1;
+  document.getElementById('g3-hdr-hp').textContent=p.hp+'/'+p.maxHp;
+  document.getElementById('g3-hdr-mp').textContent=p.mp+'/'+p.maxMp;
+  document.getElementById('g3-hdr-atk').textContent=p.atk;
+  document.getElementById('g3-hdr-def').textContent=p.def;
+  document.getElementById('g3-gold').textContent=p.gold;
+  document.getElementById('g3-xp').textContent=p.xp||0;
+  var nxt=g3XpForNext();
+  document.getElementById('g3-xpnext').textContent=nxt!==null?nxt:'MAX';
+  document.getElementById('g3-lv').textContent=p.level||1;
+}
+
+function g3ShowMap(){
+  ['world','shop','inv'].forEach(function(x){var el=document.getElementById('g3-nav-'+x);if(el)el.classList.toggle('active',x==='world');});
+  g3UpdateHdr();g3RenderMap();
+}
+
+function g3RenderMap(){
+  var area=document.getElementById('g3-main-area');
+  var html='<div class="g-area-title">\u{1F5FA} World Map</div><div class="g-region-grid" id="g3-region-grid"></div>';
+  area.innerHTML=html;
+  var grid=document.getElementById('g3-region-grid');
+  G3_REGIONS.forEach(function(r,i){
+    var rs=g3G.regions[r.id]||{killCount:0,titanDefeated:false,knightDefeated:false,knightUnlocked:false};
+    var locked=i>0&&!(g3G.regions[G3_REGIONS[i-1].id]||{}).titanDefeated;
+    var div=document.createElement('div');
+    div.className='g-region-btn gr-'+r.id+(locked?' locked':'')+(rs.titanDefeated?' ':'');
+    var secretLine=rs.knightUnlocked&&!rs.knightDefeated?'<div style="font-size:10px;color:#a78bfa;margin-top:2px;">\u2620 Knight awaits!</div>':(rs.knightDefeated?'<div style="font-size:10px;color:#27ae60;margin-top:2px;">\u2713 Knight slain</div>':'<div style="font-size:10px;color:#9a88bb;margin-top:2px;">Kills: '+(rs.killCount||0)+'/5</div>');
+    div.innerHTML='<span class="ri">'+r.icon+'</span><div class="rn">'+r.name+'</div><div class="rr">'+(rs.titanDefeated?'\u2705 Titan Defeated':'Titan Alive')+'</div>'+secretLine;
+    if(!locked)div.onclick=function(){g3OpenRegion(r.id);};
+    grid.appendChild(div);
+  });
+}
+
+function g3OpenRegion(rid){
+  var region=G3_REGIONS.find(function(r){return r.id===rid;});
+  var rs=g3G.regions[rid]||{killCount:0,titanDefeated:false,knightDefeated:false,knightUnlocked:false};
+  var area=document.getElementById('g3-main-area');
+  var html='<span class="g-back-link" onclick="g3ShowMap()">\u2190 Back to Map</span>';
+  html+='<div class="g-region-header '+rid+'"><div class="rhi">'+region.icon+'</div><div class="rhn">'+region.name.toUpperCase()+'</div></div>';
+  html+='<div style="display:flex;flex-direction:column;gap:10px;">';
+  html+='<button class="g-btn g-btn-gold g-btn-full" onclick="g3StartBattle(\''+rid+'\',\'enemy\')">\u2694 Fight Enemy</button>';
+  if(!rs.titanDefeated)html+='<button class="g-btn g-btn-full" style="background:linear-gradient(135deg,#7a2200,#c0390b);color:white;padding:14px;border:2px solid #ff6b2b;border-radius:10px;font-size:9px;cursor:pointer;font-family:\'Press Start 2P\',monospace;" onclick="g3StartBattle(\''+rid+'\',\'titan\')">\u2620 Challenge '+region.boss+'</button>';
+  if(rs.knightUnlocked&&!rs.knightDefeated)html+='<button class="g-btn g-btn-full" style="background:linear-gradient(135deg,#2a006a,#6a00cc);color:white;padding:14px;border:2px solid #cc88ff;border-radius:10px;font-size:9px;cursor:pointer;font-family:\'Press Start 2P\',monospace;" onclick="g3StartBattle(\''+rid+'\',\'knight\')">\u{1F5E1} Face '+region.knight+'</button>';
+  html+='</div>';
+  area.innerHTML=html;
+}
+
+function g3OpenShop(){
+  ['world','shop','inv'].forEach(function(x){var el=document.getElementById('g3-nav-'+x);if(el)el.classList.toggle('active',x==='shop');});
+  var area=document.getElementById('g3-main-area');
+  var html='<div class="g-area-title">\u2694 The Merchant</div><div style="font-size:12px;color:#f5c542;margin-bottom:10px;">Your gold: '+g3G.player.gold+'g</div><div>';
+  G3_SHOP_ITEMS.forEach(function(item){
+    var owned=g3G.owned.includes(item.id);
+    html+='<div class="g-shop-item" style="'+(owned?'opacity:0.6;':'')+'"><div><div class="in">'+(owned?'\u2714 ':'')+item.name+'</div><div class="id">'+item.desc+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="ip">'+(item.cost===0?'FREE':item.cost+'g')+'</div>'+(owned?'<span style="color:#27ae60;font-size:11px;">Owned</span>':'<button class="g-btn g-btn-gold g-btn-sm" onclick="g3BuyItem(\''+item.id+'\')">BUY</button>')+'</div></div>';
+  });
+  html+='</div>';area.innerHTML=html;
+}
+
+function g3BuyItem(id){
+  var item=G3_SHOP_ITEMS.find(function(i){return i.id===id;});if(!item||g3G.owned.includes(item.id))return;
+  if(g3G.player.gold<item.cost){g3ShowMsg('Not Enough Gold!','You need '+item.cost+'g.',[{label:'OK',fn:function(){g3CloseMsg();}}]);return;}
+  SFX.shop();g3G.player.gold-=item.cost;g3G.owned.push(item.id);
+  if(item.eff){if(item.eff.mp){g3G.player.maxMp+=item.eff.mp;g3G.player.mp=Math.min(g3G.player.mp+item.eff.mp,g3G.player.maxMp);}if(item.eff.atk)g3G.player.atk+=item.eff.atk;}
+  g3UpdateHdr();g3OpenShop();
+}
+
+function g3OpenInventory(){
+  ['world','shop','inv'].forEach(function(x){var el=document.getElementById('g3-nav-'+x);if(el)el.classList.toggle('active',x==='inv');});
+  var area=document.getElementById('g3-main-area');
+  var html='<div class="g-area-title">\u{1F9F3} Inventory</div><div class="g-region-grid">';
+  G3_HEARTS.forEach(function(h){var cnt=g3G.hearts[h.id]||0;html+='<div class="g-inv-item" style="flex-direction:column;text-align:center;padding:12px 8px;"><div style="font-size:24px;">'+h.icon+'</div><div style="font-family:\'Press Start 2P\',monospace;font-size:8px;color:#f5c542;margin:4px 0;">'+h.name+'</div><div style="font-size:11px;color:#9a88bb;">'+h.desc+'</div><div style="font-size:11px;color:'+(cnt>0?'#27ae60':'#9a88bb');+'margin-top:4px;">'+(cnt>0?'Obtained':'Not obtained')+'</div></div>';});
+  html+='</div><div style="margin-top:12px;font-size:12px;color:#f5c542;">Gold: '+g3G.player.gold+'g</div>';
+  area.innerHTML=html;
+}
+
+function g3StartBattle(rid,type){
+  var region=G3_REGIONS.find(function(r){return r.id===rid;}),enemy,eid;
+  if(type==='titan'){eid=rid+'_titan';enemy={name:region.boss,sprite:'\u{1F9A7}',hp:region.bossHp,atk:Math.round(region.bossHp/18),def:Math.round(region.bossHp/40),gold:Math.round(region.bossHp/3),desc:'The titan lord of the '+region.name+'.',isBoss:true,curHp:region.bossHp};SFX.boss();}
+  else if(type==='knight'){eid=rid+'_knight';enemy={name:region.knight,sprite:'\u{1F9B8}',hp:region.knightHp,atk:Math.round(region.knightHp/15),def:Math.round(region.knightHp/35),gold:Math.round(region.knightHp/2.5),desc:'A secret guardian of the '+region.name+'.',isBoss:true,isSecret:true,curHp:region.knightHp};SFX.boss();}
+  else{var pool=G3_ENEMY_POOL[rid],base=pool[Math.floor(Math.random()*pool.length)];eid=rid+'_'+base.name.replace(/\s+/g,'_').toLowerCase();enemy=Object.assign({},base,{curHp:base.hp,isEnemy:true});}
+  if(!g3G.regions[rid])g3G.regions[rid]={killCount:0,titanDefeated:false,knightDefeated:false,knightUnlocked:false};
+  g3CurrentPlayer=1;g3G.p1dead=false;g3G.p2dead=false;
+  g3Battle={rid:rid,type:type,eid:eid,enemy:enemy,frozen:false,defending:false,playerTurn:true,over:false,tattledThisFight:false,actUsed:false,dodgeTurns:0,frozenTurns:0};
+  g3RenderBattle();
+}
+
+function g3RenderBattle(){
+  var area=document.getElementById('g3-main-area'),e=g3Battle.enemy,p=g3G.player;
+  var hpPct=Math.max(0,e.curHp/e.hp*100);
+  var tattled=g3G.tattled[g3Battle.eid];
+  var hpLabel=tattled?(e.curHp+'/'+e.hp):'???/???';
+  var logEl=document.getElementById('g3-battle-log');
+  var logHtml=logEl?logEl.innerHTML:'';
+  var canAct=g3Battle.playerTurn&&!g3Battle.over;
+
+  area.innerHTML='<div class="g-enemy-display"><span class="g-enemy-sprite">'+e.sprite+'</span><div class="g-enemy-name">'+e.name+(e.isBoss?' \u2620':'')+'</div><div class="g-enemy-hp-bar"><div class="g-bar-label"><span>HP</span><span>'+hpLabel+'</span></div><div class="g-bar-track"><div class="g-bar-fill" id="g3-e-hp-bar" style="width:'+(tattled?hpPct:100)+'%;background:linear-gradient(90deg,#b35a00,#e67e22);"></div></div></div></div>'+(g3PlayerMode===2?'<div id="g3-turn-ind" style="text-align:center;font-family:\'Press Start 2P\',monospace;font-size:11px;color:#f5c542;background:#1e1430;border:1px solid #5a3e8a;border-radius:3px;padding:5px 10px;margin-bottom:8px;">'+(g3CurrentPlayer===1?'Player 1\'s Turn':'Player 2\'s Turn')+'</div>':'')+'<div style="background:#1e1430;border:1px solid #5a3e8a;border-radius:8px;padding:10px 14px;margin-bottom:10px;"><div class="g-bar-label" style="margin-bottom:4px;"><span>\u2764\uFE0F HP</span><span>'+p.hp+'/'+p.maxHp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,p.hp/p.maxHp*100)+'%;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div></div><div class="g-bar-label" style="margin-bottom:4px;margin-top:6px;"><span>\u{1F499} MP</span><span>'+p.mp+'/'+p.maxMp+'</span></div><div class="g-bar-track"><div class="g-bar-fill" style="width:'+Math.max(0,p.mp/p.maxMp*100)+'%;background:linear-gradient(90deg,#1a5799,#3498db);"></div></div></div><div class="g-battle-log" id="g3-battle-log">'+logHtml+'</div><div class="g-action-grid" id="g3-action-grid"><button class="g-action-btn" '+(canAct?'':'disabled')+' onclick="g3DoAttack()"><span class="ai">\u2694</span>ATTACK</button><button class="g-action-btn g3-action-btn-magic" '+(canAct?'':'disabled')+' onclick="g3ShowMagicMenu()"><span class="ai">\u2728</span>MAGIC</button><button class="g-action-btn g3-action-btn-heart" '+(canAct?'':'disabled')+' onclick="g3ShowHeartsMenu()"><span class="ai">\u2764</span>HEARTS</button><button class="g-action-btn" '+(canAct?'':'disabled')+' onclick="g3DoTattle()"><span class="ai">\u{1F4D6}</span>TATTLE</button><button class="g-action-btn" '+(canAct?'':'disabled')+' onclick="g3DoDefend()"><span class="ai">\u{1F6E1}</span>DEFEND</button><button class="g-action-btn" '+(canAct?'':'disabled')+' onclick="g3DoAct()"><span class="ai">\u263A</span>ACT</button><button class="g-action-btn g3-action-btn-spare" '+(g3Battle.actUsed&&canAct?'':'disabled')+' onclick="g3DoSpare()"><span class="ai">\u{1F494}</span>SPARE</button></div>';
+
+  if(!logHtml){g3AddLog('system','A wild '+e.name+' appeared!');if(g3PlayerMode===2)g3AddLog('system','Player 1 goes first!');}
+}
+
+function g3AddLog(type,msg){
+  var log=document.getElementById('g3-battle-log');if(!log)return;
+  var cls={'system':'log-good','player':'log-player','enemy':'log-enemy','magic':'log-player','heart':'log-good'}[type]||'log-good';
+  var d=document.createElement('div');d.className='g-log-line g-'+cls;d.textContent=msg;log.appendChild(d);log.scrollTop=log.scrollHeight;
+}
+
+function g3DoAttack(){
+  if(!g3CanAct())return;g3Lock();SFX.attack();
+  var isTitan=g3Battle.type==='titan';
+  var dmg=Math.max(1,(isTitan?g3G.player.atk*2:g3G.player.atk)-g3Battle.enemy.atk*0.3);
+  dmg=Math.max(1,Math.round(dmg));
+  g3Battle.enemy.curHp-=dmg;
+  var who=g3PlayerMode===2?'Player '+g3CurrentPlayer:'You';
+  g3AddLog('player',who+' strike'+( g3PlayerMode===2?'s':'')+' '+g3Battle.enemy.name+' for '+dmg+' damage!'+(isTitan?' (titan bonus!)':''));
+  setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},400);
+}
+
+function g3DoDefend(){
+  if(!g3CanAct())return;g3Lock();g3Battle.defending=true;
+  g3AddLog('system','You brace for impact! DEF doubled this turn.');
+  setTimeout(function(){g3EnemyTurn();},300);
+}
+
+function g3DoAct(){
+  if(!g3CanAct())return;g3Battle.actUsed=true;
+  g3AddLog('system','You reach out peacefully... '+g3Battle.enemy.name+' is confused and does nothing!');
+  document.querySelectorAll('#g3-action-grid .g3-action-btn-spare').forEach(function(b){b.disabled=false;});
+  g3Lock();setTimeout(function(){g3AfterEnemyTurn();},400);
+}
+
+function g3DoSpare(){
+  if(!g3CanAct())return;
+  if(g3Battle.type!=='enemy'){
+    g3Lock();SFX.defeat();var who=g3PlayerMode===2?'Player '+g3CurrentPlayer:'You';
+    g3AddLog('enemy',g3Battle.enemy.name+' does not accept mercy! '+who+' was struck down!');
+    if(g3PlayerMode===2){
+      if(g3CurrentPlayer===1)g3G.p1dead=true;else g3G.p2dead=true;
+      if(g3G.p1dead&&g3G.p2dead){g3G.player.hp=g3G.player.maxHp;setTimeout(function(){g3ShowMsg('Defeated',g3Battle.enemy.name+' crushed both players!',[{label:'Back to Map',fn:function(){g3CloseMsg();g3ShowMap();}}]);},1200);}
+      else{g3G.player.hp=g3G.player.maxHp;g3RenderBattle();setTimeout(function(){g3AfterEnemyTurn();},1200);}
+    }else{g3G.player.hp=g3G.player.maxHp;setTimeout(function(){g3ShowMsg('Defeated',g3Battle.enemy.name+' crushed you!',[{label:'Back to Map',fn:function(){g3CloseMsg();g3ShowMap();}}]);},1200);}
+    return;
+  }
+  g3Lock();SFX.spare();g3AddLog('system','You spared the '+g3Battle.enemy.name+'. It fled.');
+  delete g3G.tattled[g3Battle.eid];g3Battle.over=true;
+  setTimeout(function(){g3ShowMap();},1200);
+}
+
+function g3DoTattle(){
+  if(!g3CanAct())return;g3Lock();SFX.tattle();
+  g3AddLog('magic','You study '+g3Battle.enemy.name+'!');
+  g3Battle.tattledThisFight=true;g3G.tattled[g3Battle.eid]=true;
+  g3RenderBattle();
+  // show popup on mobile
+  var e=g3Battle.enemy,tattled=g3G.tattled[g3Battle.eid];
+  var content='<div style="font-size:28px;text-align:center;margin-bottom:8px;">'+e.sprite+'</div><div style="font-family:\'Press Start 2P\',monospace;font-size:11px;color:#f5c542;text-align:center;margin-bottom:8px;">'+e.name+'</div><div class="g3-tattle-stat"><span>Max HP</span><span>'+e.hp+'</span></div><div class="g3-tattle-stat"><span>DEF</span><span>'+e.def+'</span></div><div class="g3-tattle-stat"><span>ATK</span><span>'+e.atk+'</span></div><div style="margin-top:8px;font-size:12px;color:#9a88bb;font-style:italic;">'+(e.desc||'')+'</div>';
+  document.getElementById('g3-tattle-popup-content').innerHTML=content;
+  document.getElementById('g3-tattle-popup').classList.add('active');
+  setTimeout(function(){g3AddLog('magic','Stats revealed!');g3Unlock();},700);
+}
+
+function g3CloseTattlePopup(){document.getElementById('g3-tattle-popup').classList.remove('active');}
+
+function g3ShowMagicMenu(){
+  if(!g3CanAct())return;
+  var area=document.getElementById('g3-action-grid');
+  var kills=g3G.player.totalKills||0;
+  var html='<div style="grid-column:1/-1;"><div class="g3-sub-label">\u2728 Magic Spells</div><div class="g3-magic-grid">';
+  G3_SPELLS.forEach(function(sp){
+    var unlocked=kills>=sp.unlockKills,canAfford=g3G.player.mp>=sp.cost;
+    var dis=(!unlocked||!canAfford)?'disabled':'';
+    var label=!unlocked?(sp.icon+' '+sp.name+'<br><small>Unlock at '+sp.unlockKills+' kills</small>'):(sp.icon+' '+sp.name+'<br><small>'+sp.cost+'MP</small>');
+    html+='<button class="g-action-btn g3-action-btn-magic" '+dis+' onclick="g3CastSpell(\''+sp.id+'\')">'+label+'</button>';
+  });
+  html+='</div><button class="g-action-btn" onclick="g3RenderBattle()" style="margin-top:6px;width:100%">Back</button></div>';
+  area.innerHTML=html;
+}
+
+function g3CastSpell(id){
+  if(!g3CanAct())return;
+  var sp=G3_SPELLS.find(function(s){return s.id===id;});if(!sp)return;
+  if(g3G.player.mp<sp.cost)return;
+  if((g3G.player.totalKills||0)<sp.unlockKills)return;
+  g3RenderBattle();g3Lock();SFX.magic();g3G.player.mp-=sp.cost;
+  if(sp.special==='timestop'){g3Battle.frozenTurns=2;g3AddLog('magic','You cast Time Stop! '+g3Battle.enemy.name+' is frozen in time for 2 turns!');setTimeout(function(){g3RenderBattle();g3EnemyTurn();},400);return;}
+  if(sp.special==='drain50'){var d=50;g3Battle.enemy.curHp-=d;g3G.player.hp=Math.min(g3G.player.maxHp,g3G.player.hp+d);g3AddLog('magic','Life Drain saps '+d+' HP from '+g3Battle.enemy.name+'!');setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},400);return;}
+  g3Battle.enemy.curHp-=sp.dmg;g3AddLog('magic','You cast '+sp.name+' for '+sp.dmg+' magic damage!');
+  setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},400);
+}
+
+function g3ShowHeartsMenu(){
+  if(!g3CanAct())return;
+  var area=document.getElementById('g3-action-grid');
+  var html='<div style="grid-column:1/-1;"><div class="g3-sub-label">\u2764 Hearts</div><div class="g3-hearts-grid">';
+  G3_HEARTS.forEach(function(h){
+    var cnt=g3G.hearts[h.id]||0,obtained=cnt>0;
+    html+='<button class="g-action-btn g3-action-btn-heart" '+(obtained?'':'disabled')+' onclick="g3UseHeart(\''+h.id+'\')">'+h.icon+'<br>'+h.name+'<br><small>'+(obtained?'Ready':'Not obtained')+'</small></button>';
+  });
+  html+='</div><button class="g-action-btn" onclick="g3RenderBattle()" style="margin-top:6px;width:100%">Back</button></div>';
+  area.innerHTML=html;
+}
+
+function g3UseHeart(id){
+  if(!g3CanAct())return;
+  g3RenderBattle();g3Lock();
+  if(id==='wild_growth'){g3G.player.hp=g3G.player.maxHp;g3G.player.mp=g3G.player.maxMp;SFX.heal();g3AddLog('heart','Wild Growth fully restored HP and MP!');setTimeout(function(){g3RenderBattle();g3Unlock();},500);return;}
+  if(id==='rockslide'){g3Battle.enemy.curHp-=35;SFX.attack();g3AddLog('heart','Rockslide smashes '+g3Battle.enemy.name+' for 35 damage!');setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},400);return;}
+  if(id==='inferno_blast'){g3Battle.enemy.curHp-=35;SFX.magic();g3AddLog('heart','Inferno Blast scorches '+g3Battle.enemy.name+' for 35 damage!');setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},400);return;}
+  if(id==='absolute_zero'){g3Battle.frozen=true;SFX.freeze();g3AddLog('heart','Absolute Zero! '+g3Battle.enemy.name+' is frozen and loses their next turn!');setTimeout(function(){g3RenderBattle();g3EnemyTurn();},600);return;}
+  if(id==='shadow_drain'){var d=20;g3Battle.enemy.curHp-=d;g3G.player.hp=Math.min(g3G.player.maxHp,g3G.player.hp+d);SFX.drain();g3AddLog('heart','Shadow Drain saps '+d+' HP from '+g3Battle.enemy.name+'!');setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3EnemyTurn();},500);return;}
+  if(id==='desert_dash'){g3Battle.dodgeTurns=(g3Battle.dodgeTurns||0)+3;SFX.tattle();g3AddLog('heart','Desert Dash! You will dodge the next '+g3Battle.dodgeTurns+' attacks!');setTimeout(function(){g3RenderBattle();g3Unlock();},500);return;}
+}
+
+function g3EnemyTurn(){
+  g3Battle.playerTurn=false;g3Lock();if(g3Battle.over)return;
+  if(g3Battle.frozen){g3Battle.frozen=false;g3AddLog('enemy',g3Battle.enemy.name+' is frozen solid and cannot move!');setTimeout(function(){g3AfterEnemyTurn();},700);return;}
+  if(g3Battle.frozenTurns&&g3Battle.frozenTurns>0){g3Battle.frozenTurns--;g3AddLog('enemy',g3Battle.enemy.name+' is stopped in time! ('+g3Battle.frozenTurns+' turn'+(g3Battle.frozenTurns!==1?'s':'')+' left)');setTimeout(function(){g3AfterEnemyTurn();},600);return;}
+  if(g3Battle.defending){g3Battle.defending=false;g3Battle.enemy.curHp-=10;SFX.hit();var who2=g3PlayerMode===2?'Player '+g3CurrentPlayer:'You';g3AddLog('system',who2+' blocked the attack and reflected 10 damage back!');setTimeout(function(){g3RenderBattle();g3CheckDeath()||g3AfterEnemyTurn();},500);return;}
+  if(g3Battle.dodgeTurns&&g3Battle.dodgeTurns>0){g3Battle.dodgeTurns--;var who3=g3PlayerMode===2?'Player '+g3CurrentPlayer:'You';g3AddLog('system',g3Battle.enemy.name+' attacks but '+who3+' dodge! ('+g3Battle.dodgeTurns+' dodge'+(g3Battle.dodgeTurns!==1?'s':'')+' left)');setTimeout(function(){g3AfterEnemyTurn();},600);return;}
+  var dmg=Math.max(1,g3Battle.enemy.atk-g3G.player.def);g3G.player.hp-=dmg;SFX.hit();
+  if(g3PlayerMode===2){g3AddLog('enemy',g3Battle.enemy.name+' attacks Player '+g3CurrentPlayer+' for '+dmg+' damage!');}
+  else{g3AddLog('enemy',g3Battle.enemy.name+' attacks you for '+dmg+' damage!');}
+  setTimeout(function(){
+    g3RenderBattle();
+    if(g3PlayerMode===2){
+      if(g3G.player.hp<=0){g3G.player.hp=0;if(g3CurrentPlayer===1){g3G.p1dead=true;g3AddLog('system','Player 1 has fallen!');}else{g3G.p2dead=true;g3AddLog('system','Player 2 has fallen!');}SFX.defeat();if(g3G.p1dead&&g3G.p2dead){g3AddLog('system','Both players have fallen...');g3G.player.hp=g3G.player.maxHp;setTimeout(function(){g3ShowMsg('Defeated!','Both players have fallen...',[{label:'Back to Map',fn:function(){g3CloseMsg();g3ShowMap();}}]);},1200);return;}g3G.player.hp=g3G.player.maxHp;g3RenderBattle();g3AfterEnemyTurn();}
+      else g3AfterEnemyTurn();
+    }else{
+      if(g3G.player.hp<=0){g3G.player.hp=g3G.player.maxHp;SFX.defeat();g3AddLog('system','You have been defeated...');setTimeout(function(){g3ShowMsg('Defeated!','You have been defeated!',[{label:'Back to Map',fn:function(){g3CloseMsg();g3ShowMap();}}]);},1200);}
+      else g3AfterEnemyTurn();
+    }
+  },500);
+}
+
+function g3AfterEnemyTurn(){
+  if(g3PlayerMode===2){
+    if(g3CurrentPlayer===1){if(!g3G.p2dead){g3CurrentPlayer=2;g3AddLog('system','Player 2 turn!');}}
+    else{if(!g3G.p1dead){g3CurrentPlayer=1;g3AddLog('system','Player 1 turn!');}}
+  }
+  g3Unlock();
+}
+
+function g3CheckDeath(){
+  if(g3Battle.enemy.curHp<=0){
+    g3Battle.enemy.curHp=0;g3RenderBattle();SFX.victory();g3Battle.over=true;
+    if(!g3Battle.tattledThisFight)delete g3G.tattled[g3Battle.eid];
+    var gold=Math.round(g3Battle.enemy.gold);g3G.player.gold+=gold;
+    g3AddLog('system',g3Battle.enemy.name+' was defeated! +'+gold+'g!');
+    var rs=g3G.regions[g3Battle.rid];
+    if(g3Battle.type==='titan'){
+      rs.titanDefeated=true;SFX.levelup();g3AddLog('system',g3Battle.enemy.name+' has fallen! The '+g3Battle.rid+' region is liberated!');
+      g3AddXP(45);
+      if(g3Battle.rid==='desert'){hubAwardGP(10);
+        setTimeout(function(){g3ShowMsg('REALM CONQUERED!','All six titans have fallen! The realm is at peace! You earned 10 Game Points - spend them in the hub to unlock Mini Games!',[{label:'Return to Menu',fn:function(){g3CloseMsg();g3ShowMap();}}]);},1500);
+        return true;
+      }
+    }else if(g3Battle.type==='knight'){
+      rs.knightDefeated=true;SFX.levelup();g3AddLog('system','The secret knight has been vanquished!');
+      g3AddXP(80+Math.floor(Math.random()*21));
+    }else{
+      g3AddXP(20);if(!g3G.player.totalKills)g3G.player.totalKills=0;g3G.player.totalKills++;
+      rs.killCount=(rs.killCount||0)+1;
+      var hname=g3Battle.enemy.heartDrop;
+      if(hname){var dropChance=hname==='Desert Dash'?0.08:0.6;if(Math.random()<dropChance){var h=G3_HEARTS.find(function(x){return x.name===hname;});if(h){g3G.hearts[h.id]=(g3G.hearts[h.id]||0)+1;g3AddLog('heart','You obtained a '+h.name+' heart!'+(hname==='Desert Dash'?' (RARE!)':''));SFX.coin();}}}
+      if(rs.killCount>=5&&!rs.knightUnlocked){rs.knightUnlocked=true;var reg=G3_REGIONS.find(function(r){return r.id===g3Battle.rid;});g3AddLog('system','The '+reg.knight+' has emerged from the shadows!');SFX.levelup();}
+    }
+    setTimeout(function(){
+      g3ShowMsg(g3Battle.type==='titan'?'Titan Defeated!':'Victory!',g3Battle.enemy.name+' was defeated! +'+gold+'g!',[
+        {label:'Fight Another',fn:function(){g3CloseMsg();g3StartBattle(g3Battle.rid,'enemy');}},
+        {label:'Back to Map',fn:function(){g3CloseMsg();g3ShowMap();}}
+      ]);
+    },1200);
+    return true;
+  }
+  return false;
+}
+
+function g3AddXP(amount){
+  if(!g3G.player.level)g3G.player.level=1;if(!g3G.player.xp)g3G.player.xp=0;
+  if(g3G.player.level>=11){g3AddLog('system','Max level!');return;}
+  g3G.player.xp+=amount;g3AddLog('system','You gained '+amount+' XP!');g3CheckLevelUp();g3UpdateHdr();
+}
+function g3CheckLevelUp(){
+  while(g3G.player.level<11){
+    var needed=G3_XP_THRESHOLDS[g3G.player.level];
+    if(g3G.player.xp>=needed){g3G.player.xp-=needed;g3G.player.level++;g3G.player.maxHp+=15;g3G.player.hp=Math.min(g3G.player.hp+15,g3G.player.maxHp);g3G.player.maxMp+=15;g3G.player.mp=Math.min(g3G.player.mp+15,g3G.player.maxMp);g3G.player.atk+=20;g3G.player.def+=20;SFX.levelup();g3AddLog('system','*** LEVEL UP! Now Level '+g3G.player.level+'! HP+15 MP+15 ATK+20 DEF+20 ***');}else break;
+  }
+}
+
+function g3CanAct(){return g3Battle&&g3Battle.playerTurn&&!g3Battle.over;}
+function g3Lock(){g3Battle.playerTurn=false;document.querySelectorAll('#g3-action-grid button').forEach(function(b){b.disabled=true;});}
+function g3Unlock(){g3Battle.playerTurn=true;document.querySelectorAll('#g3-action-grid button').forEach(function(b){b.disabled=false;});}
+
+function g3ShowMsg(title,body,buttons){document.getElementById('g3-msg-title').textContent=title;document.getElementById('g3-msg-body').textContent=body;var bd=document.getElementById('g3-msg-buttons');bd.innerHTML='';buttons.forEach(function(b){var btn=document.createElement('button');btn.className='g-btn g-btn-gold';btn.textContent=b.label;btn.onclick=b.fn;bd.appendChild(btn);});document.getElementById('g3-msg-overlay').classList.add('show');}
+function g3CloseMsg(){document.getElementById('g3-msg-overlay').classList.remove('show');}
+
+// ==============================================
+//  INIT
+// ==============================================
+window.addEventListener('load', function() {
+  // Init game states
+  g1Reset();g2Reset();g3PlayerMode=1;g3G=null;
+  hubLoadGP();
+  charLoadSave();
+
+  // Try to load game 1 save
+  if(g1LoadGame()){document.getElementById('g1-name-input').value=g1Player.name||'';}
+
+  // Enter key support
+  document.getElementById('g1-name-input').addEventListener('keydown',function(e){if(e.key==='Enter')g1StartGame();});
+  document.getElementById('g2-name-input').addEventListener('keydown',function(e){if(e.key==='Enter')g2StartGame();});
+  document.getElementById('g3-name-input').addEventListener('keydown',function(e){if(e.key==='Enter')g3StartGame();});
+});
+
+
+//-- HTP SYSTEM --
+function showHTP(n){document.getElementById('htp-'+n).classList.add('active');}
+function closeHTP(n){document.getElementById('htp-'+n).classList.remove('active');}
+function closeHTPPlay(n){document.getElementById('htp-'+n).classList.remove('active');launchGame(n);}
+
+//-- GP SYSTEM --
+var hubGP=0;
+var hubUnlocked=[0];
+function hubLoadGP(){
+  try{var d=localStorage.getItem('ror_hub_data');if(d){var o=JSON.parse(d);hubGP=o.gp||0;hubUnlocked=o.unlocked||[0];}}catch(e){}
+}
+function hubSaveGP(){
+  try{localStorage.setItem('ror_hub_data',JSON.stringify({gp:hubGP,unlocked:hubUnlocked}));}catch(e){}
+}
+function hubAwardGP(n){
+  hubGP=Math.min(100,hubGP+n);hubSaveGP();
+  var el=document.getElementById('gp-amount');if(el)el.textContent=hubGP;
+}
+function openGPOverlay(){
+  document.getElementById('gp-amount').textContent=hubGP;
+  document.getElementById('gp-overlay').classList.add('active');
+}
+function closeGPOverlay(){document.getElementById('gp-overlay').classList.remove('active');}
+var MG_TOTAL_SLOTS = 100;
+function useGP(){
+  if(hubGP<10){alert('You need 10 GP to unlock a mini game!');return;}
+  // Build pool of all locked slot indices (0 to MG_TOTAL_SLOTS-1) that are not yet unlocked
+  var locked=[];
+  for(var i=0;i<MG_TOTAL_SLOTS;i++){
+    if(!hubUnlocked.includes(i)) locked.push(i);
+  }
+  if(locked.length===0){alert('You have unlocked all 100 mini games!');return;}
+  // Pick a random locked slot
+  var pick=locked[Math.floor(Math.random()*locked.length)];
+  hubGP-=15;
+  hubUnlocked.push(pick);
+  hubSaveGP();
+  document.getElementById('gp-amount').textContent=hubGP;
+  var name=pick<MG_LIST.length?MG_LIST[pick].name:'Mini Game #'+(pick+1)+' (Coming Soon)';
+  alert('You unlocked: '+name+'! (Slot '+(pick+1)+' of 100)\nGo to Mini Games to play it.');
+}
+
+//-- MINI GAMES LIST --
+var MG_LIST=[
+  {name:'Speed Racer',icon:'[CAR]',desc:'Race your car down the track! Tap LEFT and RIGHT to steer and avoid obstacles. Reach 500m to win! You have 3 lives - each crash loses one.',build:buildRacer},
+  {name:'Math Blaster',icon:'[+]',desc:'Solve 10 math problems as fast as you can! A problem appears on screen - type your answer and tap Submit or press Enter. The faster you answer the more points you earn!',build:buildMath},
+  {name:'Flip Match',icon:'[?]',desc:'Flip cards to find matching pairs! Tap any face-down card to flip it. Find its match before it flips back. Match all 8 pairs to win! Fewer flips = better score.',build:buildMemory},
+  {name:'Number Guesser',icon:'[#]',desc:'I am thinking of a number between 1 and 100! Type your guess and tap Guess. I will tell you if the answer is HIGHER or LOWER. Try to get it in as few tries as possible!',build:buildGuesser},
+  {name:'Card Clash Mini',icon:'[C]',desc:'A mini card battle game! Both you and the CPU flip a card from your decks. The higher card wins the round and takes both cards. The player with the most cards at the end wins! Ties go to each player.',build:buildCardClash}
+];
+
+var activeMG=-1;
+
+function openMGOverlay(){
+  var list=document.getElementById('mg-list');
+  list.innerHTML='';
+  for(var i=0;i<MG_TOTAL_SLOTS;i++){
+    var unlocked=hubUnlocked.includes(i);
+    var hasGame=i<MG_LIST.length;
+    var div=document.createElement('div');
+    div.className='mg-card'+(unlocked?'':' locked');
+    var name=hasGame?MG_LIST[i].name:'Mini Game #'+(i+1);
+    var icon=hasGame?MG_LIST[i].icon:'[?]';
+    var sub='';
+    if(unlocked){
+      sub=i===0?'FREE STARTER':(hasGame?'UNLOCKED':'COMING SOON');
+    } else {
+      sub='15 GP to unlock';
+    }
+    div.innerHTML='<div class="mg-card-name">'+icon+' '+name+'</div><div class="mg-card-sub">'+sub+'</div>';
+    if(unlocked&&hasGame){
+      (function(idx){div.onclick=function(){closeMGOverlay();showMGHTP(idx);};})(i);
+    } else if(unlocked&&!hasGame){
+      div.innerHTML+='<div class="mg-card-sub" style="color:#f5c542;margin-top:4px;">Game being built - check back soon!</div>';
+    }
+    list.appendChild(div);
+  }
+  document.getElementById('mg-overlay').classList.add('active');
+}
+function closeMGOverlay(){document.getElementById('mg-overlay').classList.remove('active');}
+
+function showMGHTP(idx){
+  activeMG=idx;
+  var mg=MG_LIST[idx];
+  document.getElementById('mg-htp-title').textContent=mg.icon+' '+mg.name;
+  document.getElementById('mg-htp-body').textContent=mg.desc;
+  document.getElementById('mg-htp-overlay').classList.add('active');
+}
+function closeMGHTP(){
+  document.getElementById('mg-htp-overlay').classList.remove('active');
+  openMGOverlay();
+}
+var mgTimerInterval=null;
+var mgTimerSeconds=0;
+var mgOnBreak=false;
+var mgBreakInterval=null;
+var mgBreakSeconds=10*60;
+var MG_MAX_SECONDS=30*60;
+
+function launchMiniGame(){
+  document.getElementById('mg-htp-overlay').classList.remove('active');
+  document.getElementById('hub').style.display='none';
+  var screen=document.getElementById('mg-game-screen');
+  screen.classList.add('active');
+  var inner=document.getElementById('mg-game-inner');
+  inner.innerHTML='';
+  if(activeMG>=0&&MG_LIST[activeMG])MG_LIST[activeMG].build(inner);
+  // Start GP timer (1 GP per minute, cap 100)
+  if(mgTimerInterval)clearInterval(mgTimerInterval);
+  mgTimerInterval=setInterval(function(){
+    mgTimerSeconds++;
+    if(mgTimerSeconds%60===0){hubAwardGP(2);}
+    if(mgTimerSeconds>=MG_MAX_SECONDS){
+      clearInterval(mgTimerInterval);mgTimerInterval=null;
+      showMGBreak();
+    }
+  },1000);
+}
+
+function showMGBreak(){
+  // Show break overlay over the mini game screen
+  var overlay=document.getElementById('mg-break-overlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='mg-break-overlay';
+    overlay.style.cssText='position:fixed;inset:0;background:#0a0515;z-index:9600;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:monospace;';
+    overlay.innerHTML='<div style="font-size:clamp(14px,4vw,22px);color:#f5c542;margin-bottom:12px;">MINI GAME BREAK!</div>'
+      +'<div style="font-size:11px;color:#9a88bb;margin-bottom:20px;line-height:1.8;">You have been playing mini games for 30 minutes.<br>Take a 10 minute break!</div>'
+      +'<div id="mg-break-cd" style="font-size:clamp(28px,8vw,48px);color:#f5c542;margin-bottom:20px;">10:00</div>'
+      +'<button onclick="exitMiniGame()" style="font-family:monospace;font-size:10px;padding:14px 24px;background:linear-gradient(135deg,#5a3e8a,#3a2060);color:#f0e8ff;border:none;border-radius:8px;cursor:pointer;width:100%;max-width:300px;margin-bottom:10px;">GO TO HUB</button>'
+      +'<div id="mg-break-note" style="font-size:9px;color:#9a88bb;margin-top:8px;">Break ends automatically - then you can keep playing!</div>';
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+  mgBreakSeconds=10*60;
+  function updateCD(){
+    var m=Math.floor(mgBreakSeconds/60),s=mgBreakSeconds%60;
+    var el=document.getElementById('mg-break-cd');
+    if(el)el.textContent=m+':'+(s<10?'0':'')+s;
+  }
+  updateCD();
+  if(mgBreakInterval)clearInterval(mgBreakInterval);
+  mgBreakInterval=setInterval(function(){
+    mgBreakSeconds--;updateCD();
+    if(mgBreakSeconds<=0){
+      clearInterval(mgBreakInterval);mgBreakInterval=null;
+      var note=document.getElementById('mg-break-note');
+      if(note)note.textContent='Break over! Tap Play Again to keep going!';
+      var cd=document.getElementById('mg-break-cd');
+      if(cd)cd.textContent='DONE!';
+      mgTimerSeconds=0;
+    }
+  },1000);
+}
+
+function exitMiniGame(){
+  if(mgTimerInterval){clearInterval(mgTimerInterval);mgTimerInterval=null;}
+  if(mgBreakInterval){clearInterval(mgBreakInterval);mgBreakInterval=null;}
+  var overlay=document.getElementById('mg-break-overlay');
+  if(overlay)overlay.style.display='none';
+  document.getElementById('mg-game-screen').classList.remove('active');
+  document.getElementById('mg-game-inner').innerHTML='';
+  document.getElementById('hub').style.display='flex';
+  activeMG=-1;
+  mgTimerSeconds=0;
+}
+
+//-- MINI GAME 1: SPEED RACER --
+function buildRacer(el){
+  el.style.cssText='font-family:sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:#111;color:#fff;padding:12px;user-select:none;';
+  el.innerHTML='<div style="font-family:monospace;display:flex;justify-content:space-between;width:100%;max-width:320px;margin-bottom:8px;font-size:12px;color:#f5c542;">'
+    +'<span>DIST: <span id="rd">0</span>m</span><span>LIVES: <span id="rl">3</span></span><span>BEST: <span id="rb">0</span>m</span></div>'
+    +'<div id="rt" style="width:220px;height:400px;background:#2a2a2a;position:relative;overflow:hidden;border:3px solid #555;margin:0 auto;">'
+    +'<div style="position:absolute;top:8px;left:0;right:0;height:6px;background:repeating-linear-gradient(90deg,#fff 0,#fff 14px,#000 14px,#000 28px);"></div>'
+    +'<div id="rc" style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);font-size:26px;">&#x1F3CE;&#xFE0F;</div>'
+    +'</div>'
+    +'<div id="rmsg" style="font-family:monospace;font-size:11px;color:#f5c542;margin:10px 0;text-align:center;">Avoid obstacles! Reach 500m!</div>'
+    +'<div style="display:flex;gap:20px;margin-bottom:10px;">'
+    +'<button id="rlb" style="font-size:14px;padding:14px 22px;background:#251838;border:2px solid #5a3e8a;color:#f5c542;border-radius:8px;cursor:pointer;" onpointerdown="racerLeft(1)" onpointerup="racerLeft(0)">&#9664; LEFT</button>'
+    +'<button style="font-size:14px;padding:14px 22px;background:#251838;border:2px solid #5a3e8a;color:#f5c542;border-radius:8px;cursor:pointer;" onpointerdown="racerRight(1)" onpointerup="racerRight(0)">RIGHT &#9654;</button>'
+    +'</div>'
+    +'<button onclick="racerStart()" style="font-family:monospace;font-size:11px;padding:12px 24px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;">START RACE</button>';
+
+  var running=false,dist=0,lives=3,carX=50,obstacles=[],frame=0,moveDir=0,best=0,raf=null;
+  window.racerLeft=function(v){moveDir=v?-1:(moveDir===-1?0:moveDir);};
+  window.racerRight=function(v){moveDir=v?1:(moveDir===1?0:moveDir);};
+  window.racerStart=function(){
+    running=false;if(raf)cancelAnimationFrame(raf);
+    dist=0;lives=3;carX=50;obstacles=[];frame=0;
+    document.getElementById('rd').textContent=0;
+    document.getElementById('rl').textContent=3;
+    document.getElementById('rmsg').textContent='Avoid obstacles! Reach 500m!';
+    document.querySelectorAll('.robs').forEach(function(o){o.remove();});
+    running=true;loop();
+  };
+  function loop(){
+    if(!running)return;
+    frame++;
+    if(moveDir<0)carX=Math.max(8,carX-2.5);
+    if(moveDir>0)carX=Math.min(92,carX+2.5);
+    document.getElementById('rc').style.left=carX+'%';
+    if(frame%55===0){
+      var ox=8+Math.random()*84;
+      var ob=document.createElement('div');
+      ob.className='robs';ob.style.cssText='position:absolute;font-size:22px;left:'+ox+'%;top:-30px;';
+      ob.textContent=Math.random()>0.5?'&#x1F6A7;':'&#x1F697;';
+      ob.dataset.x=ox;ob.dataset.y=-30;
+      document.getElementById('rt').appendChild(ob);
+      obstacles.push(ob);
+    }
+    var spd=2+dist/150;
+    obstacles=obstacles.filter(function(ob){
+      var y=parseFloat(ob.dataset.y)+spd;
+      ob.dataset.y=y;ob.style.top=y+'px';
+      if(y>420){ob.remove();return false;}
+      var ox=parseFloat(ob.dataset.x);
+      if(y>300&&y<380&&Math.abs(ox-carX)<11){
+        ob.remove();lives--;
+        document.getElementById('rl').textContent=lives;
+        if(lives<=0){running=false;if(dist>best){best=dist;document.getElementById('rb').textContent=best;}document.getElementById('rmsg').textContent='GAME OVER! You crashed too many times!';return false;}
+        document.getElementById('rmsg').textContent='CRASH! '+lives+' lives left!';
+        return false;
+      }
+      return true;
+    });
+    dist++;document.getElementById('rd').textContent=dist;
+    if(dist>=500){running=false;if(dist>best){best=dist;document.getElementById('rb').textContent=best;}document.getElementById('rmsg').textContent='YOU WIN! You reached the finish line!';return;}
+    raf=requestAnimationFrame(loop);
+  }
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')moveDir=-1;if(e.key==='ArrowRight')moveDir=1;});
+  document.addEventListener('keyup',function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight')moveDir=0;});
+}
+
+//-- MINI GAME 2: MATH BLASTER --
+function buildMath(el){
+  el.style.cssText='font-family:monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0515;color:#f0e8ff;padding:20px;text-align:center;gap:12px;';
+  el.innerHTML='<div style="font-size:12px;color:#a78bfa;">QUESTION <span id="mqn">-</span>/10</div>'
+    +'<div id="mq" style="font-size:clamp(22px,6vw,38px);color:#f5c542;min-height:50px;">Press Start!</div>'
+    +'<input id="ma" type="number" style="font-family:monospace;font-size:20px;width:160px;padding:12px;background:#1e1430;border:2px solid #5a3e8a;color:#f0e8ff;border-radius:8px;text-align:center;outline:none;" placeholder="?">'
+    +'<button onclick="mathSub()" style="font-family:monospace;font-size:10px;padding:12px 24px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;">SUBMIT</button>'
+    +'<div id="mf" style="font-size:11px;min-height:20px;"></div>'
+    +'<div style="font-size:10px;color:#9a88bb;">Score: <span id="ms">0</span></div>'
+    +'<button onclick="mathStart()" style="font-family:monospace;font-size:10px;padding:12px 22px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;">START</button>';
+  var q=0,score=0,ans=0,active=false,tid=null,timer=0;
+  window.mathStart=function(){
+    q=0;score=0;active=true;
+    document.getElementById('ms').textContent=0;
+    document.getElementById('mf').textContent='';
+    mathNext();
+  };
+  function mathNext(){
+    if(q>=10){active=false;document.getElementById('mq').textContent='DONE!';document.getElementById('mf').textContent='Final Score: '+score+' pts!';return;}
+    q++;document.getElementById('mqn').textContent=q;
+    var ops=['+','-','x'],op=ops[Math.floor(Math.random()*3)];
+    var a=Math.floor(Math.random()*12)+1,b=Math.floor(Math.random()*12)+1;
+    if(op==='+')ans=a+b;
+    else if(op==='-'){if(a<b){var t=a;a=b;b=t;}ans=a-b;}
+    else ans=a*b;
+    document.getElementById('mq').textContent=a+' '+op+' '+b+' = ?';
+    var inp=document.getElementById('ma');inp.value='';inp.focus();
+    timer=10;clearInterval(tid);
+    document.getElementById('mf').textContent='Time: 10s';
+    tid=setInterval(function(){
+      timer--;document.getElementById('mf').textContent='Time: '+timer+'s';
+      if(timer<=0){clearInterval(tid);document.getElementById('mf').textContent='Too slow! Answer was '+ans;setTimeout(mathNext,1200);}
+    },1000);
+  }
+  window.mathSub=function(){
+    if(!active)return;
+    var v=parseInt(document.getElementById('ma').value,10);
+    clearInterval(tid);
+    if(v===ans){var pts=timer*10;score+=pts;document.getElementById('ms').textContent=score;document.getElementById('mf').textContent='Correct! +'+pts+' pts!';}
+    else{document.getElementById('mf').textContent='Wrong! Answer was '+ans;}
+    setTimeout(mathNext,1000);
+  };
+  document.getElementById('ma').addEventListener('keydown',function(e){if(e.key==='Enter')mathSub();});
+}
+
+//-- MINI GAME 3: FLIP MATCH --
+function buildMemory(el){
+  el.style.cssText='font-family:monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:#0a0515;color:#f0e8ff;padding:16px;';
+  el.innerHTML='<div style="display:flex;justify-content:space-between;width:100%;max-width:360px;font-size:9px;color:#f5c542;margin-bottom:12px;">'
+    +'<span>FLIPS: <span id="mfl">0</span></span><span>PAIRS: <span id="mpa">0</span>/8</span><span>BEST: <span id="mbe">-</span></span></div>'
+    +'<div id="mgr" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:360px;width:100%;margin:0 auto;"></div>'
+    +'<div id="mmsg" style="font-size:10px;color:#9a88bb;margin-top:12px;text-align:center;">Tap cards to find matching pairs!</div>'
+    +'<button onclick="memStart()" style="font-family:monospace;font-size:9px;padding:12px 22px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;margin-top:12px;">NEW GAME</button>';
+  var emojis=['A','B','C','D','E','F','G','H'];
+  var flipped=[],matched=0,flips=0,busy=false,best=null;
+  window.memStart=function(){
+    flipped=[];matched=0;flips=0;busy=false;
+    document.getElementById('mfl').textContent=0;document.getElementById('mpa').textContent=0;
+    document.getElementById('mmsg').textContent='Find all matching pairs!';
+    var deck=emojis.concat(emojis).sort(function(){return Math.random()-0.5;});
+    var gr=document.getElementById('mgr');gr.innerHTML='';
+    deck.forEach(function(letter,i){
+      var card=document.createElement('div');
+      card.style.cssText='aspect-ratio:1;background:#251838;border:2px solid #5a3e8a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,5vw,28px);cursor:pointer;transition:all 0.2s;font-weight:900;color:#0a0515;';
+      card.textContent='?';card.style.color='#5a3e8a';
+      card.dataset.val=letter;card.dataset.matched='0';card.dataset.revealed='0';
+      card.onclick=function(){memFlip(card);};
+      gr.appendChild(card);
+    });
+  };
+  function memFlip(card){
+    if(busy||card.dataset.matched==='1'||card.dataset.revealed==='1')return;
+    card.textContent=card.dataset.val;card.style.color='#f5c542';card.style.borderColor='#f5c542';
+    card.dataset.revealed='1';flipped.push(card);
+    if(flipped.length===2){
+      flips++;document.getElementById('mfl').textContent=flips;busy=true;
+      setTimeout(function(){
+        if(flipped[0].dataset.val===flipped[1].dataset.val){
+          flipped.forEach(function(c){c.style.background='#0a2a0a';c.style.borderColor='#27ae60';c.dataset.matched='1';});
+          matched++;document.getElementById('mpa').textContent=matched;
+          if(matched===8){if(best===null||flips<best){best=flips;document.getElementById('mbe').textContent=best;}document.getElementById('mmsg').textContent='You matched them all in '+flips+' flips!';}
+        }else{
+          flipped.forEach(function(c){c.textContent='?';c.style.color='#5a3e8a';c.style.borderColor='#5a3e8a';c.dataset.revealed='0';});
+        }
+        flipped=[];busy=false;
+      },900);
+    }
+  }
+  window.memStart();
+}
+
+//-- MINI GAME 4: NUMBER GUESSER --
+function buildGuesser(el){
+  el.style.cssText='font-family:monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0515;color:#f0e8ff;padding:20px;text-align:center;gap:14px;';
+  el.innerHTML='<div style="font-size:14px;color:#a78bfa;">NUMBER GUESSER</div>'
+    +'<div id="gc" style="font-size:clamp(12px,3vw,16px);color:#f5c542;min-height:28px;">I am thinking of a number between 1 and 100!</div>'
+    +'<div id="gh" style="font-size:12px;color:#a78bfa;min-height:20px;"></div>'
+    +'<input id="gi" type="number" min="1" max="100" style="font-family:monospace;font-size:20px;width:150px;padding:12px;background:#1e1430;border:2px solid #5a3e8a;color:#f0e8ff;border-radius:8px;text-align:center;outline:none;" placeholder="1-100">'
+    +'<button onclick="guessSub()" style="font-family:monospace;font-size:10px;padding:12px 24px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;">GUESS</button>'
+    +'<div style="font-size:9px;color:#9a88bb;">Tries: <span id="gt">0</span></div>'
+    +'<button id="gre" onclick="guessStart()" style="font-family:monospace;font-size:9px;padding:12px 22px;background:linear-gradient(135deg,#f5c542,#c9922a);color:#1a1025;border:none;border-radius:8px;cursor:pointer;display:none;">NEW GAME</button>';
+  var secret=0,tries=0,done=false;
+  window.guessStart=function(){
+    secret=Math.floor(Math.random()*100)+1;tries=0;done=false;
+    document.getElementById('gc').textContent='I am thinking of a number between 1 and 100!';
+    document.getElementById('gh').textContent='';document.getElementById('gt').textContent=0;
+    document.getElementById('gi').value='';document.getElementById('gi').focus();
+    document.getElementById('gre').style.display='none';
+  };
+  window.guessSub=function(){
+    if(done)return;
+    var v=parseInt(document.getElementById('gi').value,10);
+    if(isNaN(v)||v<1||v>100){document.getElementById('gh').textContent='Enter a number 1-100!';return;}
+    tries++;document.getElementById('gt').textContent=tries;
+    if(v===secret){document.getElementById('gc').textContent='Correct! The number was '+secret+'!';document.getElementById('gh').textContent='You got it in '+tries+' tries!';done=true;document.getElementById('gre').style.display='';}
+    else if(v<secret){document.getElementById('gh').textContent='HIGHER! Try again.';}
+    else{document.getElementById('gh').textContent='LOWER! Try again.';}
+    document.getElementById('gi').value='';if(!done)document.getElementById('gi').focus();
+  };
+  document.getElementById('gi').addEventListener('keydown',function(e){if(e.key==='Enter')guessSub();});
+  window.guessStart();
+}
+
+//-- MINI GAME 5: CARD CLASH MINI --
+function buildCardClash(el){
+  el.style.cssText='font-family:monospace;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1c4d3c;color:#f0d28a;padding:20px;text-align:center;gap:14px;';
+  var RANKS=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+  var VALS={2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,10:10,J:11,Q:12,K:13,A:14};
+  var SUITS=[{s:'S',r:false},{s:'H',r:true},{s:'D',r:true},{s:'C',r:false}];
+  el.innerHTML='<div style="font-size:13px;color:#d8b256;margin-bottom:4px;">CARD CLASH MINI</div>'
+    +'<div style="display:flex;gap:24px;align-items:center;justify-content:center;">'
+    +'<div><div style="font-size:9px;margin-bottom:6px;">YOU</div>'
+    +'<div id="ccp" style="background:#faf6ee;color:#211b14;border-radius:10px;width:80px;height:120px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;font-weight:900;border:2px solid #d8b256;font-family:Georgia,serif;">?</div>'
+    +'<div style="font-size:9px;margin-top:6px;"><span id="ccpc">26</span> cards</div></div>'
+    +'<div style="font-size:16px;">VS</div>'
+    +'<div><div style="font-size:9px;margin-bottom:6px;">CPU</div>'
+    +'<div id="ccc" style="background:#faf6ee;color:#211b14;border-radius:10px;width:80px;height:120px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px;font-weight:900;border:2px solid #d8b256;font-family:Georgia,serif;">?</div>'
+    +'<div style="font-size:9px;margin-top:6px;"><span id="cccc">26</span> cards</div></div>'
+    +'</div>'
+    +'<div id="ccr" style="font-size:11px;min-height:20px;color:#f5c542;">Draw a card to begin!</div>'
+    +'<div style="font-size:9px;color:#d8b256;">Round: <span id="ccrn">0</span></div>'
+    +'<button id="ccfb" onclick="ccFlip()" style="font-family:monospace;font-size:10px;padding:14px 26px;background:linear-gradient(135deg,#d8b256,#a07820);color:#1a1025;border:none;border-radius:8px;cursor:pointer;">DRAW CARDS</button>'
+    +'<button id="ccnb" onclick="ccNew()" style="font-family:monospace;font-size:9px;padding:12px 22px;background:linear-gradient(135deg,#d8b256,#a07820);color:#1a1025;border:none;border-radius:8px;cursor:pointer;display:none;">NEW GAME</button>';
+  var pDeck=[],cDeck=[],round=0,over=false;
+  function makeDeck(){
+    var d=[];
+    RANKS.forEach(function(r){SUITS.forEach(function(s){d.push({r:r,s:s});});});
+    return d.sort(function(){return Math.random()-0.5;});
+  }
+  window.ccNew=function(){
+    var deck=makeDeck();pDeck=deck.slice(0,26);cDeck=deck.slice(26);round=0;over=false;
+    document.getElementById('ccpc').textContent=26;document.getElementById('cccc').textContent=26;
+    document.getElementById('ccrn').textContent=0;document.getElementById('ccr').textContent='Draw a card to begin!';
+    document.getElementById('ccp').textContent='?';document.getElementById('ccp').style.color='#211b14';
+    document.getElementById('ccc').textContent='?';document.getElementById('ccc').style.color='#211b14';
+    document.getElementById('ccfb').style.display='';document.getElementById('ccnb').style.display='none';
+  };
+  window.ccFlip=function(){
+    if(over||!pDeck.length||!cDeck.length)return;
+    round++;document.getElementById('ccrn').textContent=round;
+    var pc=pDeck.shift(),cc=cDeck.shift();
+    var pEl=document.getElementById('ccp'),cEl=document.getElementById('ccc');
+    pEl.textContent=pc.r+pc.s.s;pEl.style.color=pc.s.r?'#b3402f':'#211b14';
+    cEl.textContent=cc.r+cc.s.s;cEl.style.color=cc.s.r?'#b3402f':'#211b14';
+    var pv=VALS[pc.r],cv=VALS[cc.r];
+    if(pv>cv){pDeck.push(pc,cc);document.getElementById('ccr').textContent='You win this round!';}
+    else if(cv>pv){cDeck.push(pc,cc);document.getElementById('ccr').textContent='CPU wins this round!';}
+    else{pDeck.push(pc);cDeck.push(cc);document.getElementById('ccr').textContent='Tie! Each player keeps their card.';}
+    document.getElementById('ccpc').textContent=pDeck.length;document.getElementById('cccc').textContent=cDeck.length;
+    if(!pDeck.length||!cDeck.length||round>=52){
+      over=true;document.getElementById('ccfb').style.display='none';document.getElementById('ccnb').style.display='';
+      var w=pDeck.length>cDeck.length?'YOU WIN! You have more cards!':pDeck.length<cDeck.length?'CPU WINS! CPU has more cards!':'DRAW! Equal cards!';
+      document.getElementById('ccr').textContent=w;
+    }
+  };
+  window.ccNew();
+}
+
+
+
+//== PLAY TIMER SYSTEM ==
+var ptActive = false;
+var ptGameNum = 0;
+var ptSeconds = 0;
+var ptMaxSeconds = 20 * 60; // 20 minutes
+var ptInterval = null;
+var ptExtended = false;
+
+function ptStart(gameNum) {
+  ptGameNum = gameNum;
+  ptSeconds = 0;
+  ptExtended = false;
+  ptActive = true;
+  var bar = document.getElementById('play-timer-bar');
+  bar.classList.add('active');
+  document.getElementById('ptb-gp-num').textContent = hubGP;
+  ptUpdateBar();
+  if (ptInterval) clearInterval(ptInterval);
+  ptInterval = setInterval(function() {
+    if (!ptActive) return;
+    ptSeconds++;
+    ptUpdateBar();
+    // Award 1 GP every 60 seconds
+    if (ptSeconds % 60 === 0) {
+      hubAwardGP(1);
+      document.getElementById('ptb-gp-num').textContent = hubGP;
+    }
+    // Hit the time limit
+    var limit = ptExtended ? ptMaxSeconds + 10 * 60 : ptMaxSeconds;
+    if (ptSeconds >= limit) {
+      ptStop();
+      showBreakScreen();
+    }
+  }, 1000);
+}
+
+function ptStop() {
+  ptActive = false;
+  clearInterval(ptInterval);
+  ptInterval = null;
+  document.getElementById('play-timer-bar').classList.remove('active');
+}
+
+function ptUpdateBar() {
+  var limit = ptExtended ? ptMaxSeconds + 10 * 60 : ptMaxSeconds;
+  var remaining = Math.max(0, limit - ptSeconds);
+  var mins = Math.floor(remaining / 60);
+  var secs = remaining % 60;
+  var label = mins + ':' + (secs < 10 ? '0' : '') + secs;
+  document.getElementById('ptb-label').textContent = label;
+  var pct = Math.max(0, (remaining / limit) * 100);
+  document.getElementById('ptb-fill').style.width = pct + '%';
+  // Color shift: green -> yellow -> red
+  if (pct > 50) {
+    document.getElementById('ptb-fill').style.background = 'linear-gradient(90deg,#27ae60,#f5c542)';
+  } else if (pct > 20) {
+    document.getElementById('ptb-fill').style.background = 'linear-gradient(90deg,#f5c542,#e67e22)';
+  } else {
+    document.getElementById('ptb-fill').style.background = 'linear-gradient(90deg,#e67e22,#e74c3c)';
+  }
+}
+
+// Break screen vars
+var breakInterval = null;
+var breakSeconds = 5 * 60;
+
+function showBreakScreen() {
+  // Award any remaining partial minute GP already handled per-minute above
+  document.getElementById('break-gp-earned').textContent = Math.floor(ptSeconds / 60);
+  document.getElementById('break-screen').classList.add('active');
+  // Hide all game wrappers
+  document.querySelectorAll('.game-wrapper').forEach(function(w){w.classList.remove('active');});
+  document.getElementById('hub').style.display = 'none';
+  // Update extend button
+  var btn = document.getElementById('break-extend-btn');
+  btn.disabled = hubGP < 10;
+  btn.textContent = 'USE 10 GP FOR 10 MORE MINUTES (You have ' + hubGP + ' GP)';
+  // Start break countdown
+  breakSeconds = 5 * 60;
+  updateBreakCountdown();
+  if (breakInterval) clearInterval(breakInterval);
+  breakInterval = setInterval(function() {
+    breakSeconds--;
+    updateBreakCountdown();
+    if (breakSeconds <= 0) {
+      clearInterval(breakInterval);
+      // Break over - let them play again but keep break screen showing with message
+      document.getElementById('break-countdown').textContent = 'DONE!';
+      document.getElementById('break-countdown-small').textContent = 'Done!';
+      document.getElementById('break-extend-btn').textContent = 'BREAK OVER - GO PLAY!';
+      document.getElementById('break-extend-btn').disabled = false;
+      document.getElementById('break-extend-btn').onclick = function() { breakGoHub(); };
+    }
+  }, 1000);
+}
+
+function updateBreakCountdown() {
+  var mins = Math.floor(breakSeconds / 60);
+  var secs = breakSeconds % 60;
+  var label = mins + ':' + (secs < 10 ? '0' : '') + secs;
+  document.getElementById('break-countdown').textContent = label;
+  document.getElementById('break-countdown-small').textContent = label;
+}
+
+function breakExtend() {
+  if (hubGP < 10) return;
+  hubGP -= 10;
+  hubSaveGP();
+  clearInterval(breakInterval);
+  document.getElementById('break-screen').classList.remove('active');
+  ptExtended = true;
+  ptActive = true;
+  // Restart timer from current position for 10 more mins
+  document.getElementById('ptb-gp-num').textContent = hubGP;
+  document.getElementById('play-timer-bar').classList.add('active');
+  ptUpdateBar();
+  if (ptInterval) clearInterval(ptInterval);
+  ptInterval = setInterval(function() {
+    if (!ptActive) return;
+    ptSeconds++;
+    ptUpdateBar();
+    if (ptSeconds % 60 === 0) {
+      hubAwardGP(1);
+      document.getElementById('ptb-gp-num').textContent = hubGP;
+    }
+    var limit = ptMaxSeconds + 10 * 60;
+    if (ptSeconds >= limit) {
+      ptStop();
+      showBreakScreen();
+    }
+  }, 1000);
+  // Relaunch the game they were playing
+  launchGame(ptGameNum);
+}
+
+function breakGoHub() {
+  clearInterval(breakInterval);
+  document.getElementById('break-screen').classList.remove('active');
+  document.querySelectorAll('.game-wrapper').forEach(function(w){w.classList.remove('active');});
+  document.getElementById('hub').style.display = 'flex';
+  ptSeconds = 0;
+  ptExtended = false;
+}
+
+// Patch launchGame to start the timer
+var _origLaunchGame = launchGame;
+launchGame = function(n) {
+  _origLaunchGame(n);
+  ptStart(n);
+};
+
+// Patch backToHub to stop the timer
+var _origBackToHub = backToHub;
+backToHub = function() {
+  ptStop();
+  _origBackToHub();
+};
+
+
+
+//== CHARACTER SYSTEM ==
+var CHARACTERS = [
+  {id:'warrior',    name:'Warrior',    sprite:'\u{1F9D9}',  cls:'Fighter',      hp:60, maxHp:60, mp:10, maxMp:10, atk:12, def:10, desc:'High attack and defense. Low MP.'},
+  {id:'mage',       name:'Mage',       sprite:'\u{1F9D9}\u200D\u2642\uFE0F', cls:'Spellcaster', hp:30, maxHp:30, mp:40, maxMp:40, atk:5,  def:4,  desc:'Powerful magic. Very fragile.'},
+  {id:'rogue',      name:'Rogue',      sprite:'\u{1F977}',  cls:'Assassin',     hp:40, maxHp:40, mp:15, maxMp:15, atk:14, def:5,  desc:'Highest attack. Low defense.'},
+  {id:'paladin',    name:'Paladin',    sprite:'\u{1F6E1}\uFE0F', cls:'Holy Knight', hp:55, maxHp:55, mp:20, maxMp:20, atk:9,  def:12, desc:'Balanced fighter with holy power.'},
+  {id:'archer',     name:'Archer',     sprite:'\u{1F3F9}',  cls:'Ranger',       hp:38, maxHp:38, mp:18, maxMp:18, atk:11, def:6,  desc:'Quick and precise. Good attack.'},
+  {id:'healer',     name:'Healer',     sprite:'\u{1FA7A}',  cls:'Cleric',       hp:35, maxHp:35, mp:35, maxMp:35, atk:5,  def:7,  desc:'High MP for healing. Weak attacker.'},
+  {id:'berserker',  name:'Berserker',  sprite:'\u{1F9DF}',  cls:'Rage Fighter', hp:70, maxHp:70, mp:5,  maxMp:5,  atk:15, def:3,  desc:'Massive HP and attack. Almost no MP.'},
+  {id:'ninja',      name:'Ninja',      sprite:'\u{1F97B}',  cls:'Shadow',       hp:35, maxHp:35, mp:20, maxMp:20, atk:13, def:4,  desc:'Fast and deadly. Low HP.'},
+  {id:'knight',     name:'Knight',     sprite:'\u{1FA96}',  cls:'Guardian',     hp:65, maxHp:65, mp:12, maxMp:12, atk:8,  def:15, desc:'Highest defense. A living wall.'},
+  {id:'sorcerer',   name:'Sorcerer',   sprite:'\u{1F9D9}\u200D\u2640\uFE0F', cls:'Dark Mage', hp:28, maxHp:28, mp:50, maxMp:50, atk:6,  def:3,  desc:'Extreme magic power. Very low HP.'},
+  {id:'druid',      name:'Druid',      sprite:'\u{1F9D9}',  cls:'Nature Mage',  hp:42, maxHp:42, mp:30, maxMp:30, atk:7,  def:8,  desc:'Balanced magic and defense.'},
+  {id:'monk',       name:'Monk',       sprite:'\u{1F9D8}',  cls:'Martial Arts', hp:45, maxHp:45, mp:22, maxMp:22, atk:10, def:10, desc:'Perfectly balanced in all stats.'},
+  {id:'pirate',     name:'Pirate',     sprite:'\u{1F3F4}',  cls:'Buccaneer',    hp:48, maxHp:48, mp:14, maxMp:14, atk:11, def:7,  desc:'Tough brawler with good attack.'},
+  {id:'alchemist',  name:'Alchemist',  sprite:'\u{1F9EA}',  cls:'Potion Maker', hp:32, maxHp:32, mp:38, maxMp:38, atk:6,  def:6,  desc:'Strong magic with decent HP.'},
+  {id:'samurai',    name:'Samurai',    sprite:'\u{1F5E1}\uFE0F', cls:'Blade Master', hp:50, maxHp:50, mp:10, maxMp:10, atk:16, def:8,  desc:'Highest attack of all swords.'},
+  {id:'vampire',    name:'Vampire',    sprite:'\u{1F9DB}',  cls:'Bloodsucker',  hp:44, maxHp:44, mp:25, maxMp:25, atk:10, def:6,  desc:'Drains life. Good magic and attack.'},
+  {id:'golem',      name:'Golem',      sprite:'\u{1F5FF}',  cls:'Stone Giant',  hp:80, maxHp:80, mp:5,  maxMp:5,  atk:7,  def:18, desc:'Highest HP and defense. Slow.'},
+  {id:'bard',       name:'Bard',       sprite:'\u{1F3B8}',  cls:'Performer',    hp:36, maxHp:36, mp:28, maxMp:28, atk:7,  def:5,  desc:'Songs weaken enemies. Decent magic.'},
+  {id:'witch',      name:'Witch',      sprite:'\u{1F9D9}\u200D\u2640\uFE0F', cls:'Hex Caster', hp:30, maxHp:30, mp:45, maxMp:45, atk:8,  def:4,  desc:'Powerful curses. High MP.'},
+  {id:'titan',      name:'Titan',      sprite:'\u{1F9B8}',  cls:'Legend',       hp:75, maxHp:75, mp:15, maxMp:15, atk:14, def:14, desc:'Nearly perfect in attack and defense.'},
+  {id:'ghost',      name:'Ghost',      sprite:'\u{1F47B}',  cls:'Phantom',      hp:25, maxHp:25, mp:45, maxMp:45, atk:9,  def:3,  desc:'Ethereal. High MP, very low HP.'},
+  {id:'beast',      name:'Beast',      sprite:'\u{1F43A}',  cls:'Wild One',     hp:55, maxHp:55, mp:8,  maxMp:8,  atk:13, def:9,  desc:'Raw animal power. High attack and HP.'},
+  {id:'dragon',     name:'Dragon',     sprite:'\u{1F432}',  cls:'Drake Knight', hp:65, maxHp:65, mp:20, maxMp:20, atk:13, def:11, desc:'Powerful all-rounder with fire power.'},
+  {id:'angel',      name:'Angel',      sprite:'\u{1F47C}',  cls:'Celestial',    hp:45, maxHp:45, mp:35, maxMp:35, atk:9,  def:9,  desc:'Heavenly balanced stats.'},
+  {id:'shadow',     name:'Shadow',     sprite:'\u{1F316}',  cls:'Dark One',     hp:40, maxHp:40, mp:30, maxMp:30, atk:12, def:6,  desc:'Dark power. High attack and magic.'},
+];
+
+var equippedCharId = null;
+
+function charLoadSave(){
+  try{var d=localStorage.getItem('ror_char');if(d)equippedCharId=d;}catch(e){}
+}
+function charSave(){
+  try{if(equippedCharId)localStorage.setItem('ror_char',equippedCharId);}catch(e){}
+}
+function getEquippedChar(){
+  if(!equippedCharId) return null;
+  return CHARACTERS.find(function(c){return c.id===equippedCharId;})||null;
+}
+
+function openCharOverlay(){
+  var grid=document.getElementById('char-grid');
+  grid.innerHTML='';
+  CHARACTERS.forEach(function(c){
+    var isEquipped=equippedCharId===c.id;
+    var div=document.createElement('div');
+    div.className='char-card'+(isEquipped?' selected':'');
+    div.innerHTML='<span class="char-sprite">'+c.sprite+'</span>'
+      +'<div class="char-name">'+c.name+'</div>'
+      +'<div class="char-class">'+c.cls+'</div>'
+      +'<div class="char-stats">'
+      +'<b>HP</b> '+c.hp+' &nbsp; <b>MP</b> '+c.mp+'<br>'
+      +'<b>ATK</b> '+c.atk+' &nbsp; <b>DEF</b> '+c.def
+      +'</div>'
+      +(isEquipped?'<div class="char-equipped">EQUIPPED</div>':'')
+      +'<button class="char-select-btn'+(isEquipped?' equipped':'')+'" onclick="equipChar(\'+c.id+\')">'
+      +(isEquipped?'EQUIPPED':'SELECT')+'</button>';
+    grid.appendChild(div);
+  });
+  document.getElementById('char-overlay').classList.add('active');
+}
+function closeCharOverlay(){
+  document.getElementById('char-overlay').classList.remove('active');
+}
+function equipChar(id){
+  equippedCharId=id;charSave();
+  closeCharOverlay();openCharOverlay();
+}
+
+// Apply character stats to a player object before battle
+function applyCharStats(playerObj){
+  var c=getEquippedChar();
+  if(!c) return;
+  playerObj.hp=c.hp;playerObj.maxHp=c.maxHp;
+  playerObj.mp=c.mp;playerObj.maxMp=c.maxMp;
+  playerObj.atk=c.atk;playerObj.def=c.def;
+}
+function getCharSprite(){
+  var c=getEquippedChar();
+  return c?c.sprite:'\u{1F9D9}';
+}
+
+// Patch g1StartBattle to apply char stats and show sprite
+var _g1StartBattle=g1StartBattle;
+g1StartBattle=function(idx,isBoss){
+  _g1StartBattle(idx,isBoss);
+  applyCharStats(g1Player);
+  g1UpdateHeader();
+};
+// Patch g1RenderBattle to show char sprite
+var _g1RenderBattle=g1RenderBattle;
+g1RenderBattle=function(){
+  _g1RenderBattle();
+  // inject char sprite next to player name in battle
+  var area=document.getElementById('g1-main-area');
+  if(area){
+    var labels=area.querySelectorAll('.g-bar-label span');
+    labels.forEach(function(el){
+      if(el.textContent&&el.textContent.indexOf(g1Player.name)!==-1&&!el.dataset.charPatched){
+        el.dataset.charPatched='1';
+        el.textContent=getCharSprite()+' '+g1Player.name;
+      }
+    });
+  }
+};
+
+// Patch g2StartBattle
+var _g2StartBattle=g2StartBattle;
+g2StartBattle=function(idx,isBoss){
+  _g2StartBattle(idx,isBoss);
+  applyCharStats(g2Player);
+  g2UpdateHeader();
+};
+var _g2RenderBattle=g2RenderBattle;
+g2RenderBattle=function(){
+  _g2RenderBattle();
+  var area=document.getElementById('g2-main-area');
+  if(area){
+    var labels=area.querySelectorAll('.g-bar-label span');
+    labels.forEach(function(el){
+      if(el.textContent&&el.textContent.indexOf(g2Player.name)!==-1&&!el.dataset.charPatched){
+        el.dataset.charPatched='1';
+        el.textContent=getCharSprite()+' '+g2Player.name;
+      }
+    });
+  }
+};
+
+// Patch g3StartBattle
+var _g3StartBattle=g3StartBattle;
+g3StartBattle=function(rid,type){
+  _g3StartBattle(rid,type);
+  applyCharStats(g3G.player);
+};
+var _g3RenderBattle=g3RenderBattle;
+g3RenderBattle=function(){
+  _g3RenderBattle();
+  var area=document.getElementById('g3-main-area');
+  if(area){
+    var hpLabels=area.querySelectorAll('.g-bar-label');
+    hpLabels.forEach(function(row){
+      var first=row.querySelector('span');
+      if(first&&first.textContent.indexOf('HP')!==-1&&!row.dataset.charPatched){
+        row.dataset.charPatched='1';
+        first.textContent=getCharSprite()+' HP';
+      }
+    });
+  }
+};
+
+</script>
+
+<!-- PLAY TIMER BAR -->
+<div class="play-timer-bar" id="play-timer-bar">
+  <span id="ptb-label">0:00</span>
+  <div class="play-timer-track"><div class="play-timer-fill" id="ptb-fill" style="width:100%;"></div></div>
+  <span id="ptb-gp">GP: <span id="ptb-gp-num">0</span></span>
+</div>
+
+<!-- BREAK SCREEN -->
+<div class="break-screen" id="break-screen">
+  <div class="break-title">TIME FOR A BREAK!</div>
+  <div class="break-sub">You have been playing for 20 minutes.<br>Take a 5 minute break before playing again!<br><br>You earned <span id="break-gp-earned">20</span> GP this session!</div>
+  <div class="break-timer" id="break-countdown">5:00</div>
+  <button class="break-gp-btn" id="break-extend-btn" onclick="breakExtend()">USE 10 GP FOR 10 MORE MINUTES</button>
+  <button class="break-gp-btn" style="background:linear-gradient(135deg,#5a3e8a,#3a2060);color:#f0e8ff;" onclick="breakGoHub()">GO TO HUB</button>
+  <div style="font-size:8px;color:#9a88bb;margin-top:10px;">Break ends in <span id="break-countdown-small">5:00</span> then you can keep playing!</div>
+</div>
+
+
+<!-- CHARACTER OVERLAY -->
+<div class="hub-overlay" id="char-overlay">
+  <div class="hub-overlay-box">
+    <div class="hub-overlay-title">&#9876; CHARACTERS</div>
+    <p style="font-size:9px;color:#9a88bb;text-align:center;margin-bottom:14px;line-height:1.8;">Pick your hero! Their stats replace your base stats in all three Realm of Regions games.</p>
+    <div class="char-grid" id="char-grid"></div>
+    <button class="hub-btn" style="border-color:#5a3e8a;color:#9a88bb;width:100%;margin-top:4px;" onclick="closeCharOverlay()">&#8592; Back</button>
+  </div>
+</div>
+
+</body>
+</html>
